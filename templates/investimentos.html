@@ -11,6 +11,15 @@
     <div class="header-app">
         <h1 class="titulo-app">Meus Investimentos</h1>
         <p class="subtitulo-app">Gerencie seu dinheiro aplicado.</p>
+        <div class="area-usuario-nav">
+            {% if current_user.is_authenticated %}
+                <p class="nome-usuario-logado">Olá, {{ current_user.nome_de_usuario }}!</p>
+                <a href="{{ url_for('Sair') }}" class="bt-nav-usuario"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            {% else %}
+                <a href="{{ url_for('Pagina_registro') }}" class="bt-nav-usuario"><i class="fas fa-user-plus"></i> Registrar</a>
+                <a href="{{ url_for('Pagina_login') }}" class="bt-nav-usuario"><i class="fas fa-sign-in-alt"></i> Login</a>
+            {% endif %}
+        </div>
     </div>
 
     <div class="container">
@@ -30,13 +39,18 @@
         </div>
 
         <div class="card card-formulario">
-            <h2 class="titulo-card">Atualizar Valor Investido</h2>
-            <form action="{{ url_for('Atualizar_investimento') }}" method="post" class="formulario-investimento">
+            <h2 class="titulo-card">Movimentar Investimentos</h2>
+            <form id="form_movimento_investimento" action="{{ url_for('Movimentar_investimento') }}" method="post" class="formulario-movimentacao-investimento">
                 <div class="campo-do-formulario">
-                    <label for="novo_valor_investido">Novo Valor Total</label>
-                    <input type="text" id="novo_valor_investido" name="novo_valor_investido" inputmode="numeric" pattern="[0-9,\.]*" placeholder="0,00" value="{{ valor_investido | formatar_moeda }}" required>
+                    <label for="valor_movimento_investimento">Valor da Movimentação</label>
+                    <input type="text" id="valor_movimento_investimento" name="valor_movimento" inputmode="numeric" pattern="[0-9,\.]*" placeholder="0,00" required>
                 </div>
-                <button type="submit" class="bt-acao bt-atualizar-investimento">Atualizar Investimento</button>
+                <div class="grupo-botoes-movimento">
+                    <button type="button" id="bt_aportar" class="bt-acao bt-aportar">Aportar <i class="fas fa-arrow-up"></i></button>
+                    <button type="button" id="bt_resgatar" class="bt-acao bt-resgatar">Resgatar <i class="fas fa-arrow-down"></i></button>
+                </div>
+                {# Este input hidden será preenchido pelo JavaScript para indicar o tipo de movimento #}
+                <input type="hidden" name="tipo_movimento" id="input_tipo_movimento">
             </form>
         </div>
 
@@ -44,8 +58,9 @@
     </div>
 
     <script>
-        // Passa o valor atual para o JS para formatação no campo
-        const valorInvestidoAtual = {{ valor_investido }};
+        // Passa os valores atuais para o JS para validação no frontend
+        const saldoCaixaAtual = {{ saldo_caixa | tojson | safe }};
+        const valorInvestidoAtual = {{ valor_investido | tojson | safe }};
     </script>
     <script src="{{ url_for('static', filename='js/investimentos.js') }}"></script>
 </body>

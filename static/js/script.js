@@ -69,12 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // =====================
     // Lógica para Campo de Data (padrão atual)
     // =====================
-    const hoje = new Date();
-    const dia = String(hoje.getDate()).padStart(2, '0');
-    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-    const ano = hoje.getFullYear();
-    campoDeDataTransacao.value = `${ano}-${mes}-${dia}`;
-
+    // Este campo já vem preenchido do Flask com a data atual ISO
+    // campoDeDataTransacao.value = `{{ data_atual_iso }}`; // Removido do JS, agora no HTML diretamente
 
     // =====================
     // Lógica para Gerenciamento de Categoria (Select/Input) - Transações e Gastos Fixos
@@ -99,18 +95,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Preenche as categorias existentes no select de gastos fixos
     if (campoDeCategoriaGastoFixoExistente && categoriasExistentes) {
-        campoDeCategoriaGastoFixoExistente.querySelectorAll('option:not([disabled])').forEach(option => option.remove());
+        // Limpa as opções existentes antes de preencher, exceto a primeira "Selecione ou Crie"
+        campoDeCategoriaGastoFixoExistente.querySelectorAll('option:not([disabled]):not([value="nova_categoria_gasto_fixo"])').forEach(option => option.remove());
 
         categoriasExistentes.forEach(cat => {
             const option = document.createElement('option');
             option.value = cat;
             option.textContent = cat;
-            campoDeCategoriaGastoFixoExistente.appendChild(option);
+            campoDeCategoriaGastoFixoExistente.insertBefore(option, campoDeCategoriaGastoFixoExistente.lastElementChild);
         });
-        const novaCatOptionGastoFixo = document.createElement('option');
-        novaCatOptionGastoFixo.value = 'nova_categoria_gasto_fixo';
-        novaCatOptionGastoFixo.textContent = 'Nova Categoria...';
-        campoDeCategoriaGastoFixoExistente.appendChild(novaCatOptionGastoFixo);
+        // Garante que a opção "Nova Categoria..." esteja sempre por último
+        const novaCatOptionGastoFixo = campoDeCategoriaGastoFixoExistente.querySelector('option[value="nova_categoria_gasto_fixo"]');
+        if (!novaCatOptionGastoFixo) { // Adiciona se não existir
+            const newOption = document.createElement('option');
+            newOption.value = 'nova_categoria_gasto_fixo';
+            newOption.textContent = 'Nova Categoria...';
+            campoDeCategoriaGastoFixoExistente.appendChild(newOption);
+        }
     }
 
 
@@ -144,7 +145,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // =====================
     const ctx = document.getElementById('graficoCircular').getContext('2d');
     
-    // Agora o gráfico usa: Gastos do Mês, Entradas do Mês e Valor Investido Total
+    // Os dados já vêm diretamente do Flask e são específicos do usuário logado
+    // totalEntradasMensal, totalGastosMensal, valorInvestidoTotal são variáveis globais do HTML
+
     const totalParaGrafico = totalEntradasMensal + totalGastosMensal + valorInvestidoTotal;
 
     let percentualEntradas = 0;
@@ -185,6 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (dataGrafico.length === 0) {
+        // Se não houver dados, exibe uma mensagem
         ctx.canvas.parentNode.innerHTML = '<p class="mensagem-vazia">Nenhum dado para o panorama financeiro.</p>';
     } else {
         new Chart(ctx, {

@@ -2,9 +2,9 @@
 /* Variáveis de Cores */
 /* ===================== */
 :root {
-    --cor-primaria: #8a2be2; /* Um roxo vibrante */
-    --cor-secundaria: #6a0dad; /* Um roxo mais escuro */
-    --cor-fundo: #f0f2f5; /* Cinza claro para o fundo */
+    --cor-primaria: #6C5CE7; /* Um roxo vibrante e moderno */
+    --cor-secundaria: #4F38D9; /* Um roxo mais escuro */
+    --cor-fundo: #F5F7FA; /* Cinza muito claro para o fundo */
     --cor-card-fundo: #ffffff;
     --cor-texto-principal: #333333;
     --cor-texto-secundario: #666666;
@@ -13,11 +13,16 @@
     --cor-investimento: #007bff; /* Azul para investimentos */
     --cor-borda-clara: #e0e0e0;
     --cor-borda-escura: #cccccc;
-    --cor-btn-secundario: #f0f0f0;
-    --cor-btn-secundario-hover: #e0e0e0;
+    --cor-btn-secundario: #E8EAF6; /* Azul claro suave para botões secundários */
+    --cor-btn-secundario-hover: #D7DAE9; /* Um pouco mais escuro no hover */
     --cor-grafico-entrada: #28a745; /* Verde para entrada no gráfico */
     --cor-grafico-gasto: #dc3545; /* Vermelho para gasto no gráfico */
     --cor-grafico-investimento: #007bff; /* Azul para investimento no gráfico */
+
+    /* Novas variáveis para sombras */
+    --sombra-card: 0 4px 15px rgba(0, 0, 0, 0.08); /* Sombra mais pronunciada e suave */
+    --sombra-botao: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --sombra-foco: 0 0 0 4px rgba(108, 92, 231, 0.25); /* Sombra de foco mais sutil */
 }
 
 /* ===================== */
@@ -35,13 +40,13 @@ body {
 }
 
 .header-app {
-    background-color: var(--cor-primaria);
+    background-image: linear-gradient(to right, var(--cor-primaria), var(--cor-secundaria)); /* Gradiente sutil */
     color: white;
     padding: 40px 20px 80px;
     text-align: center;
     border-bottom-left-radius: 50px;
     border-bottom-right-radius: 50px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--sombra-card); /* Aplica a nova sombra */
     margin-bottom: -50px;
     position: relative;
     z-index: 1;
@@ -56,6 +61,44 @@ body {
 .subtitulo-app {
     font-size: 1em;
     opacity: 0.9;
+}
+
+/* Estilo para Área de Navegação do Usuário no Header */
+.area-usuario-nav {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.nome-usuario-logado {
+    font-size: 0.9em;
+    font-weight: 500;
+    margin: 0;
+    padding: 5px 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
+.bt-nav-usuario {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 5px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.bt-nav-usuario:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: white;
 }
 
 .container {
@@ -74,12 +117,13 @@ body {
     border-radius: 12px;
     padding: 25px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease-in-out;
+    box-shadow: var(--sombra-card); /* Aplica a nova sombra */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Adiciona transição para sombra */
 }
 
 .card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-5px); /* Efeito mais pronunciado no hover */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); /* Sombra mais intensa no hover */
 }
 
 .titulo-card {
@@ -102,6 +146,7 @@ body {
 
 .icone-resumo {
     font-size: 1.3em;
+    color: var(--cor-secundaria); /* Ícones com a cor secundária */
 }
 
 /* Areas de Resumo */
@@ -112,12 +157,64 @@ body {
     margin-bottom: 20px;
 }
 
-.area-visao-geral-mensal { /* Para Entradas do Mês e Gastos do Mês */
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
-    margin-top: 20px; /* Espaçamento após o formulário/gastos fixos */
+/* Novo Card de Balanço Mensal */
+.area-balanco-mensal {
+    margin-top: 20px;
     margin-bottom: 20px;
+}
+
+.card-balanco-mensal {
+    text-align: center;
+    padding: 25px;
+}
+
+.card-balanco-mensal .titulo-card {
+    justify-content: center; /* Centraliza o título */
+}
+
+.detalhes-balanco p {
+    margin: 8px 0;
+    font-size: 1.1em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px; /* Pequeno padding para afastar bordas */
+}
+
+.detalhes-balanco span {
+    font-weight: 700;
+}
+
+.detalhes-balanco .valor-entrada {
+    color: var(--cor-sucesso);
+}
+
+.detalhes-balanco .valor-gasto {
+    color: var(--cor-erro);
+}
+
+.detalhes-balanco .valor-liquido.positivo {
+    color: var(--cor-sucesso);
+    font-size: 1.2em; /* Destaca o saldo líquido */
+}
+
+.detalhes-balanco .valor-liquido.negativo {
+    color: var(--cor-erro);
+    font-size: 1.2em; /* Destaca o saldo líquido */
+}
+
+.botoes-balanco {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.botoes-balanco .bt-ver-detalhes {
+    flex-grow: 1; /* Permite que os botões cresçam para ocupar o espaço */
+    max-width: 48%; /* Limita o tamanho em telas maiores */
+    padding: 10px 15px;
+    font-size: 0.95em;
 }
 
 
@@ -157,18 +254,20 @@ body {
     text-decoration: none;
     font-size: 0.9em;
     font-weight: 500;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: var(--sombra-botao); /* Aplica sombra ao botão */
 }
 
 .bt-ver-detalhes:hover {
     background-color: var(--cor-btn-secundario-hover);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra mais intensa no hover */
 }
 
 
 /* ===================== */
 /* Formulário */
 /* ===================== */
-.formulario-transacao, .formulario-gasto-fixo, .formulario-investimento { /* Estilo unificado */
+.formulario-transacao, .formulario-gasto-fixo, .formulario-investimento, .formulario-login-registro {
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -183,23 +282,24 @@ body {
 }
 
 .campo-do-formulario input[type="text"],
+.campo-do-formulario input[type="password"],
 .campo-do-formulario input[type="number"],
 .campo-do-formulario input[type="date"],
 .campo-do-formulario select {
     width: calc(100% - 24px);
     padding: 12px;
     border: 1px solid var(--cor-borda-clara);
-    border-radius: 8px;
+    border-radius: 8px; /* Borda arredondada */
     font-size: 1em;
     box-sizing: border-box;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease; /* Adiciona transição para foco */
 }
 
 .campo-do-formulario input:focus,
 .campo-do-formulario select:focus {
     border-color: var(--cor-primaria);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+    box-shadow: var(--sombra-foco); /* Sombra de foco mais sutil */
 }
 
 /* Estilo para Radio Buttons */
@@ -223,7 +323,7 @@ body {
 
 .radio-label input[type="radio"] {
     margin-right: 8px;
-    accent-color: var(--cor-primaria);
+    accent-color: var(--cor-primaria); /* Cor do rádio button */
 }
 
 .bt-acao {
@@ -233,26 +333,29 @@ body {
     font-size: 1.1em;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
+    transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.2s ease;
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
     text-decoration: none;
+    box-shadow: var(--sombra-botao); /* Sombra para botões de ação */
 }
 
 .bt-acao:active {
-    transform: translateY(1px);
+    transform: translateY(2px); /* Efeito de 'clique' mais evidente */
+    box-shadow: none; /* Remove sombra ao clicar */
 }
 
-.bt-adicionar, .bt-adicionar-gasto-fixo, .bt-atualizar-investimento { /* Estilo para botões de adicionar/atualizar */
+.bt-adicionar, .bt-adicionar-gasto-fixo, .bt-atualizar-investimento, .bt-login-registro {
     background-color: var(--cor-primaria);
     color: white;
 }
 
-.bt-adicionar:hover, .bt-adicionar-gasto-fixo:hover, .bt-atualizar-investimento:hover {
+.bt-adicionar:hover, .bt-adicionar-gasto-fixo:hover, .bt-atualizar-investimento:hover, .bt-login-registro:hover {
     background-color: var(--cor-secundaria);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra mais intensa no hover */
 }
 
 .bt-voltar {
@@ -263,10 +366,12 @@ body {
     justify-content: center;
     align-items: center;
     text-decoration: none;
+    box-shadow: var(--sombra-botao);
 }
 
 .bt-voltar:hover {
     background-color: var(--cor-btn-secundario-hover);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 
@@ -287,7 +392,7 @@ body {
 
 .legenda-grafico {
     display: flex;
-    flex-wrap: wrap; /* Permite que a legenda quebre linha em telas pequenas */
+    flex-wrap: wrap;
     justify-content: center;
     gap: 25px;
     font-size: 0.95em;
@@ -311,7 +416,7 @@ body {
 
 .cor-legenda.entrada { background-color: var(--cor-grafico-entrada); }
 .cor-legenda.gasto { background-color: var(--cor-grafico-gasto); }
-.cor-legenda.investimento { background-color: var(--cor-grafico-investimento); } /* Nova cor para investimento */
+.cor-legenda.investimento { background-color: var(--cor-grafico-investimento); }
 
 
 /* ===================== */
@@ -384,7 +489,7 @@ body {
     border: none;
     font-size: 1.2em;
     cursor: pointer;
-    opacity: 0.6;
+    opacity: 0.7; /* Suaviza a opacidade */
     transition: opacity 0.2s ease, color 0.2s ease;
     padding: 5px;
     border-radius: 50%;
@@ -403,6 +508,7 @@ body {
     padding: 20px;
     background-color: #f8f8f8;
     border-radius: 8px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05); /* Sombra sutil */
 }
 
 .ver-todas-transacoes {
@@ -442,6 +548,7 @@ body {
     width: fit-content;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     animation: fadeOut 5s forwards;
+    display: inline-block; /* Para centralizar com width:fit-content */
 }
 
 .mensagem.sucesso {
@@ -454,6 +561,12 @@ body {
     background-color: #ffe6e8;
     color: #8c2e36;
     border: 1px solid #e7b3bb;
+}
+
+.mensagem.info {
+    background-color: #e0f2f7;
+    color: #0056b3;
+    border: 1px solid #a3daeb;
 }
 
 @keyframes fadeOut {
@@ -532,7 +645,7 @@ body {
     background-color: var(--cor-card-fundo);
     padding: 15px 25px;
     border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--sombra-card); /* Sombra no card do botão */
     margin-bottom: 20px;
 }
 
@@ -543,10 +656,12 @@ body {
     padding: 12px 25px;
     font-size: 1.1em;
     border-radius: 8px;
+    box-shadow: var(--sombra-botao); /* Sombra para este botão também */
 }
 
 .bt-toggle-gastos-fixos:hover {
     background-color: var(--cor-secundaria);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* ===================== */
@@ -572,17 +687,20 @@ body {
     background-color: var(--cor-btn-secundario);
     color: var(--cor-texto-principal);
     border: 1px solid var(--cor-borda-clara);
+    box-shadow: var(--sombra-botao); /* Sombra para estes botões */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .bt-filtro-relatorio.ativo {
     background-color: var(--cor-primaria);
     color: white;
     border-color: var(--cor-primaria);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(108, 92, 231, 0.25); /* Sombra sutil para ativo */
 }
 
 .bt-filtro-relatorio:not(.ativo):hover {
     background-color: var(--cor-btn-secundario-hover);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .subtitulo-secao {
@@ -647,6 +765,62 @@ body {
     margin-top: 20px;
 }
 
+/* Grupo de botões para movimentação (aporte/resgate) */
+.grupo-botoes-movimento {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.grupo-botoes-movimento .bt-acao {
+    flex: 1;
+}
+
+.bt-aportar {
+    color:#fff;
+    background-color: var(--cor-sucesso);
+}
+.bt-aportar:hover {
+    background-color: #218838;
+}
+
+.bt-resgatar {
+    color:#fff;
+    background-color: var(--cor-erro);
+}
+.bt-resgatar:hover {
+    background-color: #c82333;
+}
+
+
+/* ===================== */
+/* Estilos para Páginas de Login/Registro */
+/* ===================== */
+.card-login-registro {
+    max-width: 400px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+.card-login-registro .titulo-card {
+    justify-content: center;
+}
+
+.card-login-registro p {
+    font-size: 0.9em;
+    margin-top: 15px;
+}
+
+.card-login-registro a {
+    color: var(--cor-primaria);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.card-login-registro a:hover {
+    text-decoration: underline;
+}
+
 /* ===================== */
 /* Responsividade */
 /* ===================== */
@@ -662,23 +836,46 @@ body {
     .subtitulo-app {
         font-size: 0.9em;
     }
+    .area-usuario-nav {
+        position: static;
+        margin-top: 15px;
+        justify-content: center;
+        width: 100%;
+    }
     .container {
         padding: 15px;
     }
     .card {
         padding: 20px;
     }
-    .area-resumo-principal, .area-visao-geral-mensal { /* Apply to both grid containers */
+    .area-resumo-principal, .area-visao-geral-mensal {
         grid-template-columns: 1fr;
     }
     .valor-principal, .valor-resumo {
         font-size: 2em;
     }
     .bt-acao {
-        padding: 10px 15px;
-        font-size: 1em;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+        width: 100%;
+        display: flex;
+        justify-content: center; /* <-- Garanta que esta linha esteja presente e seja efetiva */
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        text-align: center; /* Adicione isso para garantir centralização de texto em caso de fallback */
+    }
+    .bt-acao i {
+    /* Se o ícone estiver desalinhado, pode precisar de ajuste fino */
+        margin-right: 5px; /* Pequeno espaçamento entre ícone e texto */
     }
     .campo-do-formulario input,
+    .campo-do-formulario input[type="password"],
     .campo-do-formulario select {
         padding: 10px;
         font-size: 0.95em;
@@ -721,8 +918,107 @@ body {
     .formulario-gasto-fixo .campo-do-formulario select {
         width: 100%;
     }
+    .grupo-botoes-movimento {
+        flex-direction: column;
+        gap: 10px;
+    }
+    /* Ajustes para os botões do Balanço do Mês no mobile */
+    .botoes-balanco {
+        flex-direction: row; /* Mantém os botões em linha */
+        flex-wrap: wrap; /* Permite quebrar linha se não houver espaço */
+        justify-content: center;
+        gap: 8px; /* Espaçamento reduzido */
+    }
+    .botoes-balanco .bt-ver-detalhes {
+        flex-grow: 1;
+        max-width: calc(50% - 4px); /* Tenta manter dois por linha */
+        min-width: 130px; /* Garante tamanho mínimo */
+    }
 }
 
+/* ===================== */
+/* Novo Card de Resumo Financeiro Total (Saldo e Investido) */
+/* ===================== */
+.area-resumo-financeiro-total {
+    margin-bottom: 20px;
+}
+
+.card-resumo-total {
+    text-align: center; /* Centraliza o título */
+    padding: 25px;
+}
+
+.card-resumo-total .titulo-card {
+    justify-content: center; /* Centraliza o título com ícone */
+}
+
+.detalhes-resumo-total {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.detalhes-resumo-total .item-resumo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    font-size: 1.15em;
+    border-bottom: 1px solid var(--cor-borda-clara); /* Linha divisória */
+}
+
+.detalhes-resumo-total .item-resumo:last-child {
+    border-bottom: none; /* Remove a linha do último item */
+}
+
+.detalhes-resumo-total .label-resumo {
+    font-weight: 600;
+    color: var(--cor-texto-secundario);
+}
+
+.detalhes-resumo-total .valor-resumo-total {
+    font-weight: 700;
+}
+
+.detalhes-resumo-total .valor-caixa {
+    color: var(--cor-primaria); /* Cor do saldo em caixa */
+}
+
+.detalhes-resumo-total .valor-investimento {
+    color: var(--cor-investimento); /* Cor do valor investido */
+}
+
+.bt-gerenciar-investimento {
+    margin-top: 10px; /* Espaçamento do botão para cima */
+}
+
+
+/* Remova ou ajuste as classes antigas se não forem mais usadas: */
+/* .area-resumo-principal {} */
+/* .card-saldo-caixa {} */
+/* .card-investido {} */
+
+/* E ajuste a responsividade para o novo card, se necessário: */
+@media (max-width: 768px) {
+    /* ... outros estilos ... */
+
+    /* Ajuste para os botões do Balanço do Mês */
+    .botoes-balanco {
+        flex-direction: row; /* Mantém os botões lado a lado */
+        flex-wrap: wrap; /* Permite que os botões quebrem para a próxima linha se não houver espaço suficiente */
+        justify-content: center; /* Centraliza os botões horizontalmente */
+        gap: 10px; /* Espaçamento entre os botões */
+    }
+
+    .botoes-balanco .bt-ver-detalhes {
+        flex-grow: 1; /* Permite que os botões cresçam para preencher o espaço disponível */
+        max-width: calc(50% - 5px); /* Tenta manter dois por linha, ajustando para o gap */
+        min-width: 140px; /* Garante um tamanho mínimo para não ficarem muito pequenos */
+        padding: 12px 10px; /* Ajusta o padding para caber melhor */
+        font-size: 0.9em; /* Reduz um pouco o tamanho da fonte */
+    }
+
+    /* ... outros estilos ... */
+}
 @media (max-width: 480px) {
     .header-app {
         border-bottom-left-radius: 20px;

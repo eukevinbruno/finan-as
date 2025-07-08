@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Meu App de Finanças</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="header-app">
+        <h1 class="titulo-app">Acessar Minhas Finanças</h1>
+        <p class="subtitulo-app">Faça login para continuar.</p>
+    </div>
+
+    <div class="container">
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% if mensagens %}
+                <div class="area-de-mensagens">
+                    {% for categoria, mensagem in mensagens %}
+                        <div class="mensagem {{ categoria }}">{{ mensagem }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="card card-login-registro">
+            <h2 class="titulo-card"><i class="fas fa-sign-in-alt"></i> Login</h2>
+            <form action="{{ url_for('Pagina_login') }}" method="post" class="formulario-login-registro">
+                <div class="campo-do-formulario">
+                    <label for="nome_de_usuario">Nome de Usuário</label>
+                    <input type="text" id="nome_de_usuario" name="nome_de_usuario" required>
+                </div>
+                <div class="campo-do-formulario">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" name="senha" required>
+                </div>
+                <button type="submit" class="bt-acao bt-login-registro">Entrar</button>
+            </form>
+            <p>Ainda não tem uma conta? <a href="{{ url_for('Pagina_registro') }}">Registre-se aqui</a>.</p>
+        </div>
+    </div>
+</body>
+</html>

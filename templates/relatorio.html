@@ -11,9 +11,24 @@
     <div class="header-app">
         <h1 class="titulo-app">Relatório de Transações</h1>
         <p class="subtitulo-app">Visão detalhada de suas movimentações.</p>
+        <div class="info-usuario-logado">
+            {% if nome_usuario_logado %}
+                Olá, {{ nome_usuario_logado }}! | <a href="{{ url_for('logout') }}" class="link-logout">Sair <i class="fas fa-sign-out-alt"></i></a>
+            {% endif %}
+        </div>
     </div>
 
     <div class="container">
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% if mensagens %}
+                <div class="area-de-mensagens">
+                    {% for categoria, mensagem in mensagens %}
+                        <div class="mensagem {{ categoria }}">{{ mensagem }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <div class="card">
             <div class="controles-relatorio">
                 <h2 class="titulo-card">Filtrar Transações</h2>
