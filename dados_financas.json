@@ -1,0 +1,39 @@
+{
+    "transacoes": [
+        {
+            "tipo": "entrada",
+            "valor": 1915.99,
+            "descricao": "",
+            "categoria": "Salario",
+            "data": "2025-07-04"
+        },
+        {
+            "tipo": "gasto",
+            "valor": 1025.96,
+            "descricao": "",
+            "categoria": "Financiamento moto",
+            "data": "2025-07-08"
+        },
+        {
+            "tipo": "gasto",
+            "valor": 60.0,
+            "descricao": "",
+            "categoria": "Gasolina",
+            "data": "2025-07-01"
+        },
+        {
+            "tipo": "entrada",
+            "valor": 1915.99,
+            "descricao": "",
+            "categoria": "Salario",
+            "data": "2025-06-05"
+        }
+    ],
+    "categorias": [
+        "Financiamento moto",
+        "Gasolina",
+        "Salario"
+    ],
+    "gastos_fixos": [],
+    "valor_investido_total": 500.0
+}

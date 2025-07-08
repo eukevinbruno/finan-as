@@ -1,0 +1,743 @@
+/* ===================== */
+/* Variáveis de Cores */
+/* ===================== */
+:root {
+    --cor-primaria: #8a2be2; /* Um roxo vibrante */
+    --cor-secundaria: #6a0dad; /* Um roxo mais escuro */
+    --cor-fundo: #f0f2f5; /* Cinza claro para o fundo */
+    --cor-card-fundo: #ffffff;
+    --cor-texto-principal: #333333;
+    --cor-texto-secundario: #666666;
+    --cor-sucesso: #28a745; /* Verde para entradas */
+    --cor-erro: #dc3545; /* Vermelho para gastos */
+    --cor-investimento: #007bff; /* Azul para investimentos */
+    --cor-borda-clara: #e0e0e0;
+    --cor-borda-escura: #cccccc;
+    --cor-btn-secundario: #f0f0f0;
+    --cor-btn-secundario-hover: #e0e0e0;
+    --cor-grafico-entrada: #28a745; /* Verde para entrada no gráfico */
+    --cor-grafico-gasto: #dc3545; /* Vermelho para gasto no gráfico */
+    --cor-grafico-investimento: #007bff; /* Azul para investimento no gráfico */
+}
+
+/* ===================== */
+/* Estilos Gerais */
+/* ===================== */
+body {
+    font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto-principal);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.header-app {
+    background-color: var(--cor-primaria);
+    color: white;
+    padding: 40px 20px 80px;
+    text-align: center;
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    margin-bottom: -50px;
+    position: relative;
+    z-index: 1;
+}
+
+.titulo-app {
+    font-size: 2.2em;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.subtitulo-app {
+    font-size: 1em;
+    opacity: 0.9;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+/* ===================== */
+/* Cards */
+/* ===================== */
+.card {
+    background-color: var(--cor-card-fundo);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+.titulo-card {
+    font-size: 1.1em;
+    color: var(--cor-texto-secundario);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.titulo-card.sub-titulo {
+    font-size: 1em;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    color: var(--cor-primaria);
+}
+
+.icone-resumo {
+    font-size: 1.3em;
+}
+
+/* Areas de Resumo */
+.area-resumo-principal { /* Para Saldo em Caixa e Valor Investido */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.area-visao-geral-mensal { /* Para Entradas do Mês e Gastos do Mês */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-top: 20px; /* Espaçamento após o formulário/gastos fixos */
+    margin-bottom: 20px;
+}
+
+
+.card-resumo {
+    text-align: center;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.valor-resumo, .valor-principal {
+    font-size: 1.8em;
+    font-weight: 700;
+    margin: 5px 0 10px;
+    white-space: nowrap;
+    text-align: center;
+    width: 100%;
+}
+.valor-principal {
+    font-size: 2.4em;
+}
+
+.card-entradas .valor-resumo { color: var(--cor-sucesso); }
+.card-gastos .valor-resumo { color: var(--cor-erro); }
+.card-saldo-caixa .valor-principal { color: var(--cor-primaria); }
+.card-investido .valor-resumo { color: var(--cor-investimento); } /* Nova cor para Investido */
+
+
+.bt-ver-detalhes {
+    display: inline-block;
+    background-color: var(--cor-btn-secundario);
+    color: var(--cor-texto-principal);
+    padding: 8px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.bt-ver-detalhes:hover {
+    background-color: var(--cor-btn-secundario-hover);
+}
+
+
+/* ===================== */
+/* Formulário */
+/* ===================== */
+.formulario-transacao, .formulario-gasto-fixo, .formulario-investimento { /* Estilo unificado */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.campo-do-formulario label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--cor-texto-secundario);
+    font-size: 0.95em;
+}
+
+.campo-do-formulario input[type="text"],
+.campo-do-formulario input[type="number"],
+.campo-do-formulario input[type="date"],
+.campo-do-formulario select {
+    width: calc(100% - 24px);
+    padding: 12px;
+    border: 1px solid var(--cor-borda-clara);
+    border-radius: 8px;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.campo-do-formulario input:focus,
+.campo-do-formulario select:focus {
+    border-color: var(--cor-primaria);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+}
+
+/* Estilo para Radio Buttons */
+.tipo-transacao-grupo {
+    margin-top: 10px;
+}
+
+.opcoes-tipo {
+    display: flex;
+    gap: 20px;
+    margin-top: 5px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: normal;
+    color: var(--cor-texto-principal);
+}
+
+.radio-label input[type="radio"] {
+    margin-right: 8px;
+    accent-color: var(--cor-primaria);
+}
+
+.bt-acao {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.bt-acao:active {
+    transform: translateY(1px);
+}
+
+.bt-adicionar, .bt-adicionar-gasto-fixo, .bt-atualizar-investimento { /* Estilo para botões de adicionar/atualizar */
+    background-color: var(--cor-primaria);
+    color: white;
+}
+
+.bt-adicionar:hover, .bt-adicionar-gasto-fixo:hover, .bt-atualizar-investimento:hover {
+    background-color: var(--cor-secundaria);
+}
+
+.bt-voltar {
+    background-color: var(--cor-btn-secundario);
+    color: var(--cor-texto-principal);
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+}
+
+.bt-voltar:hover {
+    background-color: var(--cor-btn-secundario-hover);
+}
+
+
+/* ===================== */
+/* Gráfico Circular */
+/* ===================== */
+.card-grafico {
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.area-do-canvas {
+    max-width: 250px;
+    max-height: 250px;
+    margin: 20px auto 15px;
+    position: relative;
+}
+
+.legenda-grafico {
+    display: flex;
+    flex-wrap: wrap; /* Permite que a legenda quebre linha em telas pequenas */
+    justify-content: center;
+    gap: 25px;
+    font-size: 0.95em;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.legenda-grafico p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.cor-legenda {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    margin-right: 8px;
+}
+
+.cor-legenda.entrada { background-color: var(--cor-grafico-entrada); }
+.cor-legenda.gasto { background-color: var(--cor-grafico-gasto); }
+.cor-legenda.investimento { background-color: var(--cor-grafico-investimento); } /* Nova cor para investimento */
+
+
+/* ===================== */
+/* Lista de Transações */
+/* ===================== */
+.lista-de-transacoes {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.item-transacao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--cor-borda-clara);
+}
+
+.item-transacao:last-child {
+    border-bottom: none;
+}
+
+.detalhes-transacao {
+    flex-grow: 1;
+}
+
+.descricao-transacao {
+    display: block;
+    font-weight: 600;
+    font-size: 1.05em;
+    margin-bottom: 3px;
+}
+
+.categoria-transacao {
+    display: block;
+    font-size: 0.85em;
+    color: var(--cor-texto-secundario);
+}
+
+.data-transacao {
+    font-weight: normal;
+    font-size: 0.9em;
+    color: #888;
+}
+
+.valor-transacao {
+    font-weight: 700;
+    font-size: 1.1em;
+    margin-left: 15px;
+    white-space: nowrap;
+}
+
+.item-transacao.entrada .valor-transacao {
+    color: var(--cor-sucesso);
+}
+
+.item-transacao.gasto .valor-transacao {
+    color: var(--cor-erro);
+}
+
+.formulario-excluir {
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.bt-excluir {
+    background-color: transparent;
+    color: var(--cor-texto-secundario);
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease, color 0.2s ease;
+    padding: 5px;
+    border-radius: 50%;
+}
+
+.bt-excluir:hover {
+    opacity: 1;
+    color: var(--cor-erro);
+    background-color: #ffebeb;
+}
+
+.mensagem-vazia {
+    text-align: center;
+    color: var(--cor-texto-secundario);
+    font-style: italic;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+}
+
+.ver-todas-transacoes {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+
+.ver-todas-transacoes a {
+    color: var(--cor-primaria);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.ver-todas-transacoes a:hover {
+    color: var(--cor-secundaria);
+    text-decoration: underline;
+}
+
+/* ===================== */
+/* Seção de Mensagens Flash */
+/* ===================== */
+.area-de-mensagens {
+    margin-bottom: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    text-align: center;
+}
+
+.mensagem {
+    padding: 12px 20px;
+    margin: 0 auto 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    width: fit-content;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    animation: fadeOut 5s forwards;
+}
+
+.mensagem.sucesso {
+    background-color: #e6ffed;
+    color: #1a6d2f;
+    border: 1px solid #b3e7c8;
+}
+
+.mensagem.erro {
+    background-color: #ffe6e8;
+    color: #8c2e36;
+    border: 1px solid #e7b3bb;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; display: none; }
+}
+
+/* ===================== */
+/* Estilos para Gastos Fixos */
+/* ===================== */
+.lista-gastos-fixos {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.item-gasto-fixo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--cor-borda-clara);
+}
+
+.item-gasto-fixo:last-child {
+    border-bottom: none;
+}
+
+.detalhes-gasto-fixo {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.descricao-gasto-fixo {
+    display: block;
+    font-weight: 600;
+    font-size: 1.05em;
+    margin-bottom: 3px;
+}
+
+.categoria-gasto-fixo {
+    display: block;
+    font-size: 0.85em;
+    color: var(--cor-texto-secundario);
+}
+
+.valores-gasto-fixo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+.valor-programado {
+    font-weight: 700;
+    color: var(--cor-erro);
+}
+
+.valor-aproximado {
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 2px;
+}
+
+.bt-adicionar-gasto-fixo {
+    margin-top: 15px;
+}
+
+.card-gerenciar-gastos-fixos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--cor-card-fundo);
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+}
+
+.bt-toggle-gastos-fixos {
+    background-color: var(--cor-primaria);
+    color: white;
+    width: auto;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    border-radius: 8px;
+}
+
+.bt-toggle-gastos-fixos:hover {
+    background-color: var(--cor-secundaria);
+}
+
+/* ===================== */
+/* Estilos para relatorio.html e investimentos.html */
+/* ===================== */
+.controles-relatorio {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.controles-relatorio .titulo-card {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+.bt-filtro-relatorio {
+    flex-grow: 1;
+    max-width: 48%;
+    background-color: var(--cor-btn-secundario);
+    color: var(--cor-texto-principal);
+    border: 1px solid var(--cor-borda-clara);
+}
+
+.bt-filtro-relatorio.ativo {
+    background-color: var(--cor-primaria);
+    color: white;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.bt-filtro-relatorio:not(.ativo):hover {
+    background-color: var(--cor-btn-secundario-hover);
+}
+
+.subtitulo-secao {
+    font-size: 1.2em;
+    color: var(--cor-primaria);
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.lista-detalhes-relatorio {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.item-relatorio-detalhado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--cor-borda-clara);
+}
+.item-relatorio-detalhado:last-child {
+    border-bottom: none;
+}
+
+.info-transacao-relatorio {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+.descricao-relatorio {
+    font-weight: 600;
+    color: var(--cor-texto-principal);
+    display: block;
+}
+.meta-relatorio {
+    font-size: 0.9em;
+    color: var(--cor-texto-secundario);
+    display: block;
+}
+
+.valor-relatorio {
+    font-weight: 700;
+    color: var(--cor-primaria);
+    white-space: nowrap;
+}
+.item-relatorio-detalhado.entrada .valor-relatorio {
+    color: var(--cor-sucesso);
+}
+.item-relatorio-detalhado.gasto .valor-relatorio {
+    color: var(--cor-erro);
+}
+
+/* Investimentos page specific styles */
+.card-investimento-atual {
+    text-align: center;
+    padding: 30px;
+}
+.formulario-investimento {
+    margin-top: 20px;
+}
+
+/* ===================== */
+/* Responsividade */
+/* ===================== */
+@media (max-width: 768px) {
+    .header-app {
+        padding: 30px 15px 60px;
+        border-bottom-left-radius: 30px;
+        border-bottom-right-radius: 30px;
+    }
+    .titulo-app {
+        font-size: 1.8em;
+    }
+    .subtitulo-app {
+        font-size: 0.9em;
+    }
+    .container {
+        padding: 15px;
+    }
+    .card {
+        padding: 20px;
+    }
+    .area-resumo-principal, .area-visao-geral-mensal { /* Apply to both grid containers */
+        grid-template-columns: 1fr;
+    }
+    .valor-principal, .valor-resumo {
+        font-size: 2em;
+    }
+    .bt-acao {
+        padding: 10px 15px;
+        font-size: 1em;
+    }
+    .campo-do-formulario input,
+    .campo-do-formulario select {
+        padding: 10px;
+        font-size: 0.95em;
+    }
+    .item-transacao {
+        flex-wrap: wrap;
+        padding: 12px 0;
+    }
+    .detalhes-transacao {
+        width: calc(100% - 50px);
+        margin-bottom: 5px;
+    }
+    .valor-transacao {
+        margin-left: 0;
+        width: 100%;
+        text-align: right;
+        order: 1;
+    }
+    .formulario-excluir {
+        order: 2;
+        margin-left: auto;
+    }
+    .controles-relatorio .titulo-card {
+        margin-bottom: 5px;
+    }
+    .bt-filtro-relatorio {
+        max-width: 100%;
+    }
+    .item-gasto-fixo {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .valores-gasto-fixo {
+        width: 100%;
+        align-items: flex-start;
+        margin-left: 0;
+        margin-top: 8px;
+    }
+    .formulario-gasto-fixo .campo-do-formulario input,
+    .formulario-gasto-fixo .campo-do-formulario select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-app {
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+    .titulo-app {
+        font-size: 1.6em;
+    }
+    .valor-principal {
+        font-size: 2em;
+    }
+    .item-transacao {
+        font-size: 0.95em;
+    }
+    .bt-excluir {
+        font-size: 1em;
+    }
+}

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu App de Finanças Digitais</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="header-app">
+        <h1 class="titulo-app">Finanças Pessoais</h1>
+        <p class="subtitulo-app">Controle seu dinheiro de forma simples.</p>
+    </div>
+
+    <div class="container">
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% if mensagens %}
+                <div class="area-de-mensagens">
+                    {% for categoria, mensagem in mensagens %}
+                        <div class="mensagem {{ categoria }}">{{ mensagem }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="area-resumo-principal">
+            <div class="card card-resumo card-saldo-caixa">
+                <p class="titulo-card"><i class="fas fa-wallet icone-resumo"></i> Saldo em Caixa</p>
+                <p class="valor-principal">{{ saldo_caixa | formatar_moeda }}</p>
+            </div>
+            <div class="card card-resumo card-investido">
+                <p class="titulo-card"><i class="fas fa-coins icone-resumo"></i> Valor Investido</p>
+                <p class="valor-resumo">{{ valor_investido | formatar_moeda }}</p>
+                <a href="{{ url_for('Pagina_investimentos') }}" class="bt-ver-detalhes">Gerenciar</a>
+            </div>
+        </div>
+
+        <div class="card card-formulario">
+            <h2 class="titulo-card">Nova Transação</h2>
+            <form action="{{ url_for('Adicionar_nova_transacao') }}" method="post" class="formulario-transacao">
+                <div class="campo-do-formulario">
+                    <label for="valor_transacao">Valor</label>
+                    <input type="text" id="valor_transacao" name="valor" inputmode="numeric" pattern="[0-9,\.]*" placeholder="0,00" required>
+                </div>
+                <div class="campo-do-formulario">
+                    <label for="data_transacao">Data</label>
+                    <input type="date" id="data_transacao" name="data_transacao" value="{{ data_atual_iso }}" required>
+                </div>
+                <div class="campo-do-formulario">
+                    <label for="categoria_existente">Categoria</label>
+                    <select id="categoria_existente" name="categoria_existente" required>
+                        <option value="" disabled selected>Selecione ou Crie</option>
+                        {% for cat in categorias_existentes %}
+                            <option value="{{ cat }}">{{ cat }}</option>
+                        {% endfor %}
+                        <option value="nova_categoria">Nova Categoria...</option>
+                    </select>
+                    <input type="text" id="nova_categoria_nome" name="nova_categoria_nome" placeholder="Nome da nova categoria" style="display: none; margin-top: 10px;">
+                </div>
+                <div class="campo-do-formulario">
+                    <label for="descricao">Descrição (Opcional)</label>
+                    <input type="text" id="descricao" name="descricao" placeholder="Ex: Salário, Aluguel">
+                </div>
+                <div class="campo-do-formulario tipo-transacao-grupo">
+                    <label>Tipo:</label>
+                    <div class="opcoes-tipo">
+                        <label for="entrada" class="radio-label">
+                            <input type="radio" id="entrada" name="tipo" value="entrada" checked> Entrada
+                        </label>
+                        <label for="gasto" class="radio-label">
+                            <input type="radio" id="gasto" name="tipo" value="gasto"> Gasto
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="bt-acao bt-adicionar">Adicionar</button>
+            </form>
+        </div>
+
+        <div class="card card-gerenciar-gastos-fixos">
+            <button id="bt_gerenciar_gastos_fixos" class="bt-acao bt-toggle-gastos-fixos">
+                <i class="fas fa-dollar-sign"></i> Gerenciar Gastos Fixos
+            </button>
+        </div>
+
+        <div class="card card-gastos-fixos" id="secao_gastos_fixos" style="display: none;">
+            <h2 class="titulo-card">Meus Gastos Fixos</h2>
+            <ul class="lista-gastos-fixos">
+                {% if gastos_fixos %}
+                    {% for gasto in gastos_fixos %}
+                        <li class="item-gasto-fixo">
+                            <div class="detalhes-gasto-fixo">
+                                <span class="descricao-gasto-fixo">{{ gasto.descricao }}</span>
+                                <span class="categoria-gasto-fixo">{{ gasto.categoria }}</span>
+                            </div>
+                            <div class="valores-gasto-fixo">
+                                <span class="valor-programado">Prog.: {{ gasto.valor_programado | formatar_moeda }}</span>
+                                {% if gasto.valor_aproximado %}
+                                    <span class="valor-aproximado">(Aprox.: {{ gasto.valor_aproximado | formatar_moeda }})</span>
+                                {% endif %}
+                            </div>
+                            <form action="{{ url_for('Excluir_gasto_fixo_web', indice_gasto_fixo=loop.index0) }}" method="post" class="formulario-excluir">
+                                <button type="submit" class="bt-excluir" title="Excluir Gasto Fixo"><i class="fas fa-times-circle"></i></button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <p class="mensagem-vazia">Nenhum gasto fixo cadastrado ainda.</p>
+                {% endif %}
+            </ul>
+
+            <h3 class="titulo-card sub-titulo">Adicionar Novo Gasto Fixo</h3>
+            <form action="{{ url_for('Adicionar_novo_gasto_fixo') }}" method="post" class="formulario-gasto-fixo">
+                <div class="campo-do-formulario">
+                    <label for="descricao_gasto_fixo">Descrição</label>
+                    <input type="text" id="descricao_gasto_fixo" name="descricao_gasto_fixo" placeholder="Ex: Aluguel, Netflix" required>
+                </div>
+                <div class="campo-do-formulario">
+                    <label for="valor_programado">Valor Programado</label>
+                    <input type="text" id="valor_programado" name="valor_programado" inputmode="numeric" pattern="[0-9,\.]*" placeholder="0,00" required>
+                </div>
+                <div class="campo-do-formulario">
+                    <label for="valor_aproximado">Valor Aproximado (Opcional)</label>
+                    <input type="text" id="valor_aproximado" name="valor_aproximado" inputmode="numeric" pattern="[0-9,\.]*" placeholder="0,00 (se variável)">
+                </div>
+                <div class="campo-do-formulario">
+                    <label for="categoria_gasto_fixo_existente">Categoria</label>
+                    <select id="categoria_gasto_fixo_existente" name="categoria_gasto_fixo_existente" required>
+                        <option value="" disabled selected>Selecione ou Crie</option>
+                        {% for cat in categorias_existentes %}
+                            <option value="{{ cat }}">{{ cat }}</option>
+                        {% endfor %}
+                        <option value="nova_categoria_gasto_fixo">Nova Categoria...</option>
+                    </select>
+                    <input type="text" id="nova_categoria_gasto_fixo_nome" name="nova_categoria_gasto_fixo_nome" placeholder="Nome da nova categoria" style="display: none; margin-top: 10px;">
+                </div>
+                <button type="submit" class="bt-acao bt-adicionar-gasto-fixo">Adicionar Gasto Fixo</button>
+            </form>
+        </div>
+
+        <div class="area-visao-geral-mensal">
+            <div class="card card-resumo card-entradas">
+                <p class="titulo-card"><i class="fas fa-arrow-up icone-resumo"></i> Entradas do Mês</p>
+                <p class="valor-resumo">{{ total_entradas | formatar_moeda }}</p>
+                <a href="{{ url_for('Relatorio_detalhado', tipo_relatorio='entradas') }}" class="bt-ver-detalhes">Ver Detalhes</a>
+            </div>
+            <div class="card card-resumo card-gastos">
+                <p class="titulo-card"><i class="fas fa-arrow-down icone-resumo"></i> Gastos do Mês</p>
+                <p class="valor-resumo">{{ total_gastos | formatar_moeda }}</p>
+                <a href="{{ url_for('Relatorio_detalhado', tipo_relatorio='gastos') }}" class="bt-ver-detalhes">Ver Detalhes</a>
+            </div>
+        </div>
+
+        <div class="card card-grafico">
+            <h2 class="titulo-card">Panorama Financeiro Total</h2>
+            <div class="area-do-canvas">
+                <canvas id="graficoCircular" width="300" height="300"></canvas>
+            </div>
+            <div class="legenda-grafico">
+                <p><span class="cor-legenda gasto"></span> Gastos</p>
+                <p><span class="cor-legenda entrada"></span> Entradas</p>
+                <p><span class="cor-legenda investimento"></span> Investimentos</p>
+            </div>
+        </div>
+
+        <div class="card card-historico">
+            <h2 class="titulo-card">Últimas Transações</h2>
+            {% if transacoes %}
+                <ul class="lista-de-transacoes">
+                    {% for transacao in transacoes[:7] %}
+                        <li class="item-transacao {{ transacao.tipo }}">
+                            <div class="detalhes-transacao">
+                                <span class="descricao-transacao">{{ transacao.descricao if transacao.descricao else "Sem descrição" }}</span>
+                                <span class="categoria-transacao">{{ transacao.categoria }} - <span class="data-transacao">{{ transacao.data.split('-')[2] }}/{{ transacao.data.split('-')[1] }}</span></span>
+                            </div>
+                            <span class="valor-transacao">
+                                {% if transacao.tipo == 'entrada' %}+{% else %}-{% endif %}{{ transacao.valor | formatar_moeda }}
+                            </span>
+                            <form action="{{ url_for('Excluir_transacao_web', indice_da_transacao=loop.index0) }}" method="post" class="formulario-excluir">
+                                <button type="submit" class="bt-excluir" title="Excluir Transação"><i class="fas fa-times-circle"></i></button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <p class="ver-todas-transacoes"><a href="{{ url_for('Relatorio_detalhado', tipo_relatorio='todos') }}">Ver todas as transações</a></p>
+            {% else %}
+                <p class="mensagem-vazia">Nenhuma transação registrada ainda. Comece adicionando uma!</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        const totalEntradasMensal = {{ total_entradas }};
+        const totalGastosMensal = {{ total_gastos }};
+        const saldoCaixaTotal = {{ saldo_caixa }};
+        const valorInvestidoTotal = {{ valor_investido }};
+        const categoriasExistentes = {{ categorias_existentes | tojson | safe }};
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

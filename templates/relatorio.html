@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Meu App de Finanças</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="header-app">
+        <h1 class="titulo-app">Relatório de Transações</h1>
+        <p class="subtitulo-app">Visão detalhada de suas movimentações.</p>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="controles-relatorio">
+                <h2 class="titulo-card">Filtrar Transações</h2>
+                <button id="bt_mes_atual" class="bt-acao bt-filtro-relatorio ativo">Mês Atual</button>
+                <button id="bt_todas_transacoes" class="bt-acao bt-filtro-relatorio">Todas as Transações</button>
+            </div>
+
+            <h3 class="subtitulo-secao" id="titulo_periodo">Transações do Mês Atual</h3>
+            <ul class="lista-detalhes-relatorio" id="lista_transacoes_relatorio">
+                </ul>
+            <p class="mensagem-vazia" id="mensagem_vazia_relatorio" style="display: none;">Nenhuma transação encontrada para este período.</p>
+
+            <a href="{{ url_for('Pagina_inicial') }}" class="bt-acao bt-voltar"><i class="fas fa-arrow-left"></i> Voltar ao Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        const todasAsTransacoes = {{ todas_as_transacoes | safe }};
+        const tipoRelatorioInicial = "{{ tipo_relatorio | safe }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/relatorio.js') }}"></script>
+</body>
+</html>

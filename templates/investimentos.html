@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Investimentos - App de Finanças</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="header-app">
+        <h1 class="titulo-app">Meus Investimentos</h1>
+        <p class="subtitulo-app">Gerencie seu dinheiro aplicado.</p>
+    </div>
+
+    <div class="container">
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% if mensagens %}
+                <div class="area-de-mensagens">
+                    {% for categoria, mensagem in mensagens %}
+                        <div class="mensagem {{ categoria }}">{{ mensagem }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="card card-investimento-atual">
+            <h2 class="titulo-card"><i class="fas fa-chart-line icone-resumo"></i> Valor Total Investido</h2>
+            <p class="valor-principal">{{ valor_investido | formatar_moeda }}</p>
+        </div>
+
+        <div class="card card-formulario">
+            <h2 class="titulo-card">Atualizar Valor Investido</h2>
+            <form action="{{ url_for('Atualizar_investimento') }}" method="post" class="formulario-investimento">
+                <div class="campo-do-formulario">
+                    <label for="novo_valor_investido">Novo Valor Total</label>
+                    <input type="text" id="novo_valor_investido" name="novo_valor_investido" inputmode="numeric" pattern="[0-9,\.]*" placeholder="0,00" value="{{ valor_investido | formatar_moeda }}" required>
+                </div>
+                <button type="submit" class="bt-acao bt-atualizar-investimento">Atualizar Investimento</button>
+            </form>
+        </div>
+
+        <a href="{{ url_for('Pagina_inicial') }}" class="bt-acao bt-voltar"><i class="fas fa-arrow-left"></i> Voltar ao Dashboard</a>
+    </div>
+
+    <script>
+        // Passa o valor atual para o JS para formatação no campo
+        const valorInvestidoAtual = {{ valor_investido }};
+    </script>
+    <script src="{{ url_for('static', filename='js/investimentos.js') }}"></script>
+</body>
+</html>
