@@ -139,9 +139,11 @@ document.addEventListener('DOMContentLoaded', function() {
         let percentualGastosMensal = 0;
         let percentualInvestimentoMensal = 0;
 
-        const corEntrada = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-entrada').trim();
-        const corGasto = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-gasto').trim();
-        const corInvestimento = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-investimento').trim();
+        // --- ALTERADO: Usar as variáveis passadas do HTML ---
+        const corEntrada = corGraficoEntrada;
+        const corGasto = corGraficoGasto;
+        const corInvestimento = corGraficoInvestimento;
+        // --- FIM ALTERADO ---
 
         if (totalMensalParaGrafico > 0) {
             percentualEntradasMensal = (totalEntradasMensal / totalMensalParaGrafico) * 100;
@@ -169,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (percentualInvestimentoMensal > 0) {
             dataGraficoMensal.push(percentualInvestimentoMensal);
             coresGraficoMensal.push(corInvestimento);
-            labelsGraficoMensal.push('Investimentos (Líquido)'); // Novo label para a fatia
+            labelsGraficoMensal.push('Investimentos (Líquido)');
         }
 
         if (dataGraficoMensal.length === 0) {
@@ -204,9 +206,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                     if (label) {
                                         label += ': ';
                                     }
-                                    let value = context.raw.toFixed(2) + '%'; // Valor percentual
+                                    let value = context.raw.toFixed(2) + '%';
 
-                                    // Personaliza o tooltip para a fatia de Investimentos
                                     if (context.label === 'Investimentos (Líquido)') {
                                         let prefixo = '';
                                         if (netMovimentoInvestimentoMensal > 0) {

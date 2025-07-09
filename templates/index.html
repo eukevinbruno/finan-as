@@ -50,7 +50,7 @@
 
             <div class="acoes-rapidas-area">
                 <div class="lista-acoes-rapidas">
-                    {# NOVO: Link para a nova página de transação #}
+                    {# Link para a página de Nova Transação #}
                     <a href="{{ url_for('Pagina_nova_transacao') }}" class="acao-rapida-item">
                         <div class="icone-acao"><i class="fas fa-plus-circle"></i></div>
                         <span class="texto-acao">Nova Transação</span>
@@ -59,8 +59,8 @@
                         <div class="icone-acao"><i class="fas fa-chart-line"></i></div>
                         <span class="texto-acao">Investimentos</span>
                     </a>
-                    {# NOVO: Link para a nova página de Gasto Fixo #}
-                    <a href="{{ url_for('Pagina_novo_gasto_fixo') }}" class="acao-rapida-item" id="acao_gastos_fixos_toggle">
+                    {# Link para a nova página de Gasto Fixo (listagem) #}
+                    <a href="{{ url_for('Pagina_gastos_fixos') }}" class="acao-rapida-item">
                         <div class="icone-acao"><i class="fas fa-receipt"></i></div>
                         <span class="texto-acao">Gastos Fixos</span>
                     </a>
@@ -68,16 +68,12 @@
                         <div class="icone-acao"><i class="fas fa-file-invoice-dollar"></i></div>
                         <span class="texto-acao">Extrato</span>
                     </a>
-                    {# Removidos os ícones adicionais para focar nos 4 principais #}
                 </div>
             </div>
         </div>
 
-        {# REMOVIDO: O card do formulário de Nova Transação, pois agora está em nova_transacao.html #}
-        {# REMOVIDO: O formulário de Adicionar Novo Gasto Fixo, pois agora está em novo_gasto_fixo.html #}
-
-        {# A seção secao_gastos_fixos (lista de gastos fixos) AGORA é visível por padrão #}
-        <div class="card card-gastos-fixos" id="secao_gastos_fixos">
+        {# Seção de Gastos Fixos no Dashboard (visualização simplificada) #}
+        <div class="card card-gastos-fixos">
             <h2 class="titulo-card">Meus Gastos Fixos</h2>
             <ul class="lista-gastos-fixos">
                 {% if gastos_fixos %}
@@ -93,9 +89,7 @@
                                     <span class="valor-aproximado">(Aprox.: {{ gasto.valor_aproximado | formatar_moeda }})</span>
                                 {% endif %}
                             </div>
-                            <form action="{{ url_for('Excluir_gasto_fixo_web', id_gasto_fixo=gasto.id) }}" method="post" class="formulario-excluir">
-                                <button type="submit" class="bt-excluir" title="Excluir Gasto Fixo"><i class="fas fa-times-circle"></i></button>
-                            </form>
+                            {# REMOVIDOS os botões de editar/excluir daqui #}
                         </li>
                     {% endfor %}
                 {% else %}
@@ -129,9 +123,7 @@
                             <span class="valor-transacao">
                                 {% if transacao.tipo == 'entrada' %}+{% elif transacao.tipo == 'gasto' %}-{% else %}*{% endif %}{{ transacao.valor | formatar_moeda }}
                             </span>
-                            <form action="{{ url_for('Excluir_transacao_web', id_da_transacao=transacao.id) }}" method="post" class="formulario-excluir">
-                                <button type="submit" class="bt-excluir" title="Excluir Transação"><i class="fas fa-times-circle"></i></button>
-                            </form>
+                            {# REMOVIDOS os botões de editar/excluir daqui #}
                         </li>
                     {% endfor %}
                 </ul>
@@ -149,6 +141,12 @@
         const valorInvestidoTotal = {{ valor_investido | tojson | safe }};
         const categoriasExistentes = {{ categorias_existentes | tojson | safe }};
 
+        // Cores do Gráfico passadas do Flask (getComputedStyle funciona aqui)
+        const corGraficoEntrada = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-entrada').trim();
+        const corGraficoGasto = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-gasto').trim();
+        const corGraficoInvestimento = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-investimento').trim();
+
+        // O listener DOMContentLoaded está neste script principal para funcionalidade de toggle de saldo
         document.addEventListener('DOMContentLoaded', function() {
             const valorSaldoPrincipal = document.getElementById('valor_saldo_principal');
             const btToggleSaldo = document.getElementById('bt_toggle_saldo');
@@ -168,8 +166,9 @@
             }
         });
     </script>
-    {# Chart.js carregado aqui, ANTES do script.js #}
+    {# Chart.js carregado aqui, ANTES dos seus scripts modulares #}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

@@ -49,6 +49,7 @@
         const todasAsTransacoes = {{ todas_as_transacoes | safe }};
         const tipoRelatorioInicial = "{{ tipo_relatorio | safe }}";
     </script>
-    <script src="{{ url_for('static', filename='js/relatorio.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/utils.js')}}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/relatorio.js') }}"></script>
 </body>
 </html>

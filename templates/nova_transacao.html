@@ -75,6 +75,7 @@
         // Dados para o JavaScript, vindos do Flask
         const categoriasExistentes = {{ categorias_existentes | tojson | safe }};
     </script>
-    <script src="{{ url_for('static', filename='js/nova_transacao.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/utils.js')}}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/nova_transacao.js') }}"></script>
 </body>
 </html>

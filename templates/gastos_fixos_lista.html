@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Gastos Fixos | Kinanças</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="header-app">
+        <h1 class="titulo-app">Meus Gastos Fixos</h1>
+        <div class="area-usuario-nav">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('Pagina_inicial') }}" class="bt-nav-usuario"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="{{ url_for('Sair') }}" class="bt-nav-usuario"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            {% else %}
+                <a href="{{ url_for('Pagina_registro') }}" class="bt-nav-usuario"><i class="fas fa-user-plus"></i> Registrar</a>
+                <a href="{{ url_for('Pagina_login') }}" class="bt-nav-usuario"><i class="fas fa-sign-in-alt"></i> Login</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% if mensagens %}
+                <div class="area-de-mensagens">
+                    {% for categoria, mensagem in mensagens %}
+                        <div class="mensagem {{ categoria }}">{{ mensagem }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <h2 class="titulo-card">Lista de Gastos Fixos</h2>
+            <ul class="lista-gastos-fixos">
+                {% if gastos_fixos %}
+                    {% for gasto in gastos_fixos %}
+                        <li class="item-gasto-fixo">
+                            <div class="detalhes-gasto-fixo">
+                                <span class="descricao-gasto-fixo">{{ gasto.descricao }}</span>
+                                <span class="categoria-gasto-fixo">{{ gasto.categoria }}</span>
+                            </div>
+                            <div class="valores-gasto-fixo">
+                                <span class="valor-programado">Prog.: {{ gasto.valor_programado | formatar_moeda }}</span>
+                                {% if gasto.valor_aproximado %}
+                                    <span class="valor-aproximado">(Aprox.: {{ gasto.valor_aproximado | formatar_moeda }})</span>
+                                {% endif %}
+                            </div>
+                            <form action="{{ url_for('Excluir_gasto_fixo_web', id_gasto_fixo=gasto.id) }}" method="post" class="formulario-excluir">
+                                <a href="{{ url_for('Pagina_editar_gasto_fixo', id_gasto_fixo=gasto.id) }}" class="bt-editar" title="Editar Gasto Fixo"><i class="fas fa-edit"></i></a>
+                                <button type="submit" class="bt-excluir" title="Excluir Gasto Fixo"><i class="fas fa-times-circle"></i></button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <p class="mensagem-vazia">Nenhum gasto fixo cadastrado ainda.</p>
+                {% endif %}
+            </ul>
+        </div>
+        
+        <a href="{{ url_for('Pagina_novo_gasto_fixo') }}" class="bt-acao bt-adicionar-gasto-fixo" style="margin-top: 20px;"><i class="fas fa-plus-circle"></i> Adicionar Novo Gasto Fixo</a>
+
+        <a href="{{ url_for('Pagina_inicial') }}" class="bt-acao bt-voltar"><i class="fas fa-arrow-left"></i> Voltar ao Dashboard</a>
+    </div>
+</body>
+</html>

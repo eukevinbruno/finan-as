@@ -2,42 +2,43 @@
 /* Variáveis de Cores (NOVA PALETA) */
 /* ===================== */
 :root {
-    /* Cores Primárias e de Destaque */
-    --cor-primaria: #6C63FF; /* Um roxo suave e moderno */
-    --cor-secundaria: #5B52D8; /* Versão mais escura da primária */
-    --cor-acento: #A5A0FF;   /* Um tom mais claro da primária para detalhes */
+
+        /* Cores do Gráfico (adaptadas à nova paleta) */
+    --cor-grafico-caixa: #4F86F7; /* Primária para Saldo em Caixa */
+    --cor-grafico-investimento: #F39C12; /* Laranja para Valor Investido */
+    --cor-grafico-entrada: #2ECC71; /* Verde para Entradas no gráfico */
+    --cor-grafico-gasto: #E74C3C; /* Vermelho para Gastos no gráfico */
+    
+    /* Cores Primárias e de Destaque (Azuis vibrantes e amigáveis) */
+    --cor-primaria: #4F86F7; /* Azul principal */
+    --cor-secundaria: #386CE6; /* Azul um pouco mais escuro */
+    --cor-acento: #A6C7FF;   /* Azul mais claro para detalhes */
 
     /* Cores Neutras e de Fundo */
-    --cor-fundo-geral: #F8F9FA; /* Cinza muito claro, quase branco (background sutil) */
+    --cor-fundo-geral: #F5F7FA; /* Cinza muito claro, quase branco */
     --cor-fundo-card: #FFFFFF; /* Branco puro para os cards */
-    --cor-borda-clara: #E9ECEF; /* Borda suave e discreta */
-    --cor-borda-foco: #ADB5BD; /* Borda um pouco mais escura para foco */
+    --cor-borda-clara: #E0E6EF; /* Borda suave e discreta */
+    --cor-borda-foco: #BDC5D1; /* Borda um pouco mais escura para foco */
 
     /* Cores de Texto */
-    --cor-texto-principal: #343A40; /* Preto escuro para boa legibilidade */
-    --cor-texto-secundario: #6C757D; /* Cinza médio para texto secundário/labels */
-    --cor-texto-claro: #F8F9FA; /* Usado em fundos escuros, quase branco */
+    --cor-texto-principal: #2C3E50; /* Azul-cinza escuro para boa legibilidade */
+    --cor-texto-secundario: #7F8C8D; /* Cinza médio para texto secundário/labels */
+    --cor-texto-claro: #FFFFFF; /* Usado em fundos escuros */
 
     /* Cores de Status e Ações */
-    --cor-sucesso: #28A745; /* Verde para entradas/sucesso */
-    --cor-sucesso-hover: #218838;
-    --cor-erro: #DC3545; /* Vermelho para gastos/erros */
-    --cor-erro-hover: #C82333;
-    --cor-investimento: #007BFF; /* Azul para investimentos */
-    --cor-investimento-hover: #0056b3;
-    --cor-info: #17A2B8; /* Ciano para informações */
-
-    /* Cores do Gráfico (adaptadas à nova paleta) */
-    --cor-grafico-caixa: #6C63FF; /* Primária para Saldo em Caixa */
-    --cor-grafico-investimento: #007BFF; /* Azul para Valor Investido */
-    --cor-grafico-entrada: #28A745; /* Verde para Entradas no gráfico */
-    --cor-grafico-gasto: #DC3545; /* Vermelho para Gastos no gráfico */
+    --cor-sucesso: #2ECC71; /* Verde para entradas/sucesso */
+    --cor-sucesso-hover: #27AE60;
+    --cor-erro: #E74C3C; /* Vermelho para gastos/erros */
+    --cor-erro-hover: #C0392B;
+    --cor-investimento: #F39C12; /* Laranja para investimentos */
+    --cor-investimento-hover: #E67E22;
+    --cor-info: #3498DB; /* Azul claro para informações */
 
     /* Sombras e Efeitos */
     --sombra-card: 0 5px 15px rgba(0, 0, 0, 0.08); /* Sombra mais sutil e moderna */
     --sombra-card-hover: 0 10px 25px rgba(0, 0, 0, 0.12); /* Aumenta no hover */
     --sombra-botao: 0 3px 8px rgba(0, 0, 0, 0.1);
-    --sombra-foco: 0 0 0 0.2rem rgba(108, 99, 255, 0.25); /* Foco mais suave */
+    --sombra-foco: 0 0 0 0.2rem rgba(79, 134, 247, 0.25); /* Foco mais suave com nova cor */
 
     /* Transições Padrão */
     --transicao-suave: all 0.3s ease-out; /* Transição mais rápida e suave no final */
@@ -51,8 +52,8 @@
 }
 
 html, body {
-    width: 100vw; /* Garante que o HTML e o Body ocupem exatamente a largura da viewport */
-    overflow-x: hidden; /* Adicionado para evitar rolagem horizontal indesejada */
+    width: 100vw;
+    overflow-x: hidden;
 }
 
 body {
@@ -91,7 +92,7 @@ body {
     color: var(--cor-texto-claro);
 }
 
-.subtitulo-app { /* Esta classe será removida do HTML nas páginas */
+.subtitulo-app {
     display: none;
 }
 
@@ -158,7 +159,7 @@ body {
 
 
 .container {
-    max-width: 850px; /* AJUSTADO: Largura máxima para desktop aumentada */
+    max-width: 850px;
     margin: 0 auto;
     padding: 25px;
     position: relative;
@@ -178,34 +179,33 @@ body {
     box-shadow: var(--sombra-card);
     display: flex;
     flex-direction: column;
-    gap: 0; /* Remove gap entre saldo e ações dentro do bloco */
+    gap: 0;
 }
 
 .saldo-principal-area {
-    padding: 25px 25px 15px; /* Ajuste para espaçamento interno */
+    padding: 25px 25px 15px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Alinha o conteúdo à esquerda */
+    align-items: flex-start;
 }
 
-/* NOVO: Divs para organizar o Saldo em duas linhas */
 .saldo-info-primeira-linha {
     display: flex;
-    justify-content: space-between; /* Espaço entre Saldo e link Extrato */
+    justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-bottom: 5px; /* Espaço entre a primeira e a segunda linha */
+    margin-bottom: 5px;
 }
 
 .saldo-info-segunda-linha {
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Alinha o valor à esquerda */
+    justify-content: flex-start;
     width: 100%;
 }
 
 .label-saldo {
-    font-size: 1.1em; /* Um pouco maior */
+    font-size: 1.1em;
     color: var(--cor-texto-secundario);
     font-weight: 500;
     margin-right: 10px;
@@ -215,14 +215,14 @@ body {
 .valor-e-toggle {
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Alinha o valor e o olho à esquerda no seu container */
-    flex-grow: 1; /* Ocupa o espaço restante */
+    justify-content: flex-start;
+    flex-grow: 1;
     max-width: fit-content;
-    gap: 8px; /* Espaço entre valor e olho */
+    gap: 8px;
 }
 
 .valor-saldo {
-    font-size: 2.6em; /* Saldo grande */
+    font-size: 2.6em;
     font-weight: 800;
     color: var(--cor-texto-principal);
     white-space: nowrap;
@@ -231,7 +231,7 @@ body {
 }
 
 .valor-saldo.oculto {
-    filter: blur(10px); /* Blur mais forte */
+    filter: blur(10px);
 }
 
 .bt-toggle-saldo {
@@ -267,43 +267,35 @@ body {
     text-decoration: underline;
 }
 
-.bt-gerenciar-saldo { /* Este botão foi removido do HTML */
+.bt-gerenciar-saldo {
     display: none;
 }
 
 
 /* Ações Rápidas Area (dentro do bloco principal) */
 .acoes-rapidas-area {
-    padding: 15px 0 25px; /* Ajuste para espaçamento interno, padding horizontal zero para a lista abaixo */
-    background: var(--cor-fundo-card); /* Mesma cor de fundo do bloco principal */
-    border-top: 1px solid var(--cor-borda-clara); /* Linha divisória sutil */
+    padding: 15px 25px 25px; /* Ajuste: Padding horizontal para o container */
+    background: var(--cor-fundo-card);
+    border-top: 1px solid var(--cor-borda-clara);
 }
 
 .lista-acoes-rapidas {
-    display: flex; /* AJUSTADO: Usa flexbox para layout em linha*/
-    flex-wrap: nowrap; /* AJUSTADO: Impede quebra de linha*/
-    overflow-x: auto; /* AJUSTADO: Habilita rolagem horizontal*/
-    -webkit-overflow-scrolling: touch; /* Rolagem suave em iOS */
-    scrollbar-width: none; /* Esconde a barra de rolagem para Firefox */
-    padding: 0 25px; /* Padding para as laterais da lista, quebra da largura do bloco */
-    gap: 15px; /* AJUSTADO: Espaçamento entre os itens*/
-    justify-content: space-around; /* AJUSTADO: Distribui os itens na linha*/
-}
-
-.lista-acoes-rapidas::-webkit-scrollbar {
-    display: none;
+    display: grid; /* MUDANÇA: Usa grid para layout fixo */
+    grid-template-columns: repeat(4, 1fr); /* MUDANÇA: 4 colunas de tamanho igual */
+    gap: 15px; /* Espaçamento entre os itens */
+    padding: 0; /* REMOVIDO: Padding quebra a largura do bloco */
+    justify-items: center; /* Centraliza os itens dentro de suas células de grid */
 }
 
 .acao-rapida-item {
-    flex-shrink: 0; /* Impede que os itens encolham */
-    width: 85px; /* Largura fixa para cada item na rolagem */
+    width: 100%; /* Permite que o item ocupe a largura total da sua célula de grid */
     display: flex;
     flex-direction: column;
     align-items: center;
     text-decoration: none;
     color: var(--cor-texto-principal);
     transition: var(--transicao-suave);
-    padding: 10px 0; /* Ajuste de padding interno */
+    padding: 10px 0;
     border-radius: 10px;
 }
 
@@ -787,7 +779,7 @@ body {
 .bt-excluir:hover {
     opacity: 1;
     color: var(--cor-erro);
-    background-color: rgba(220, 53, 69, 0.1);
+    background-color: rgba(231, 76, 60, 0.1);
     transform: scale(1.15);
 }
 
@@ -948,7 +940,7 @@ body {
     background-color: var(--cor-primaria);
     color: var(--cor-texto-claro);
     border-color: var(--cor-primaria);
-    box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+    box-shadow: 0 5px 15px rgba(79, 134, 247, 0.3);
     transform: translateY(-2px);
 }
 
@@ -1156,13 +1148,13 @@ body {
     }
 
     .container {
-        max-width: 95%; /* Container ocupa 95% da largura da tela */
-        padding: 20px 15px; /* AJUSTADO: Padding horizontal reduzido */
+        max-width: 95%;
+        padding: 20px 15px;
         margin: 0 auto;
         gap: 20px;
     }
     .card {
-        padding: 25px 20px; /* AJUSTADO: Padding horizontal reduzido */
+        padding: 25px 20px;
         border-radius: 12px;
     }
     .titulo-card {
@@ -1179,13 +1171,13 @@ body {
     }
 
     .saldo-principal-area {
-        padding: 25px 25px 15px; /* Manter padding específico, ajustar vertical */
+        padding: 25px 25px 15px;
     }
     .saldo-info-primeira-linha {
-        margin-bottom: 5px; /* Manter espaçamento */
+        margin-bottom: 5px;
     }
     .saldo-info-segunda-linha {
-        justify-content: flex-start; /* Alinhar à esquerda para mais espaço */
+        justify-content: flex-start;
     }
     .valor-saldo {
         font-size: 2.5em;
@@ -1197,12 +1189,9 @@ body {
     }
 
     .acoes-rapidas-area {
-        padding: 15px 0 25px;
+        padding: 15px 15px 25px; /* Ajusta o padding para mobile */
     }
-    .lista-acoes-rapidas {
-        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-        padding: 0 15px; /* Ajustar padding lateral da lista */
-    }
+    /* Removido o ajuste para 2 colunas para manter 4x1 */
     .icone-acao {
         width: 50px;
         height: 50px;
@@ -1379,12 +1368,12 @@ body {
 
     .container {
         max-width: 95%;
-        padding: 15px 10px; /* AJUSTADO: Padding horizontal reduzido */
+        padding: 15px 10px;
         margin: 0 auto;
         gap: 15px;
     }
     .card {
-        padding: 18px 14px; /* AJUSTADO: Padding horizontal reduzido */
+        padding: 18px 14px;
         border-radius: 10px;
     }
     .titulo-card {
@@ -1396,13 +1385,13 @@ body {
     }
 
     .saldo-principal-area {
-        padding: 20px 15px 10px; /* Ajuste para espaçamento interno */
+        padding: 20px 15px 10px;
     }
     .saldo-info-primeira-linha {
-        margin-bottom: 5px; /* Manter espaçamento */
+        margin-bottom: 5px;
     }
     .saldo-info-segunda-linha {
-        justify-content: flex-start; /* Alinhar à esquerda para mais espaço */
+        justify-content: flex-start;
     }
     .valor-saldo {
         font-size: 2.2em;
@@ -1417,26 +1406,10 @@ body {
     }
 
     .acoes-rapidas-area {
-        padding: 10px 0 15px; /* Ajuste de padding */
-        border-top: none; /* Remove a linha divisória aqui */
+        padding: 10px 10px 15px; /* Ajusta o padding para mobile menor */
+        border-top: none;
     }
-    .lista-acoes-rapidas {
-        display: flex; /* AJUSTADO: Usa flexbox para layout em linha*/
-        flex-wrap: nowrap; /* AJUSTADO: Impede quebrar linha para rolagem horizontal*/
-        overflow-x: auto; /* AJUSTADO: Habilita rolagem horizontal*/
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        padding: 0 15px; /* Ajuste de padding lateral da lista */
-        gap: 10px; /* AJUSTADO: Espaçamento entre os itens*/
-        justify-content: space-around; /* AJUSTADO: Distribui os itens na linha*/
-    }
-    .lista-acoes-rapidas::-webkit-scrollbar {
-        display: none;
-    }
-    .acao-rapida-item {
-        flex-shrink: 0; /* Impede encolhimento */
-        width: 80px; /* Largura fixa para mobile menor */
-    }
+    /* Removido o ajuste para 2 colunas para manter 4x1 */
     .icone-acao {
         width: 55px;
         height: 55px;

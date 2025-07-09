@@ -84,11 +84,19 @@
         const tipoRelatorioInicial = "{{ tipo_relatorio | safe }}";
         const totalEntradasMensal = {{ total_entradas }};
         const totalGastosMensal = {{ total_gastos }};
-        const totalAportesMensal = {{ total_aportes_mensal }}; // NOVO: Passando para JS
-        const totalResgatesMensal = {{ total_resgates_mensal }}; // NOVO: Passando para JS
-        const netMovimentoInvestimentoMensal = {{ net_movimento_investimento_mensal }}; // NOVO: Passando para JS
+        const totalAportesMensal = {{ total_aportes_mensal }};
+        const totalResgatesMensal = {{ total_resgates_mensal }};
+        const netMovimentoInvestimentoMensal = {{ net_movimento_investimento_mensal }};
+
+        // --- NOVO: Cores do Gráfico passadas do Flask ---
+        const corGraficoEntrada = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-entrada').trim();
+        const corGraficoGasto = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-gasto').trim();
+        const corGraficoInvestimento = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-investimento').trim();
+        // --- FIM NOVO ---
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{{ url_for('static', filename='js/relatorio.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/relatorio.js') }}"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/chart.js"></script> {# Se usarem Chart.js #}
+
 </body>
 </html>

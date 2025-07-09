@@ -248,11 +248,13 @@ def Pagina_inicial():
 
     # Obter categorias existentes do usuário (únicas nas transações e gastos fixos)
     categorias_transacoes = db.session.query(Transacao.categoria).filter_by(usuario_id=current_user.id).distinct()
-    categorias_gastos_fixos = db.session.query(GastoFixo.categoria).filter_by(usuario_id=current_user.id).distinct()
-    categorias_existentes = sorted(list(set([c[0] for c in categorias_transacoes] + [c[0] for c in categorias_gastos_fixos])))
+    categorias_gastos_fixos_db = db.session.query(GastoFixo.categoria).filter_by(usuario_id=current_user.id).distinct()
+    categorias_existentes = sorted(list(set([c[0] for c in categorias_transacoes] + [c[0] for c in categorias_gastos_fixos_db])))
 
     data_atual_iso = datetime.now().strftime('%Y-%m-%d')
-    gastos_fixos = GastoFixo.query.filter_by(usuario_id=current_user.id).all()
+    
+    # Busca apenas os primeiros 4 gastos fixos para exibir no dashboard
+    gastos_fixos_para_exibir = GastoFixo.query.filter_by(usuario_id=current_user.id).limit(4).all()
 
     return render_template(
         'index.html',
@@ -264,7 +266,7 @@ def Pagina_inicial():
         valor_investido=valor_investido,
         categorias_existentes=categorias_existentes,
         data_atual_iso=data_atual_iso,
-        gastos_fixos=gastos_fixos
+        gastos_fixos=gastos_fixos_para_exibir # Passa os gastos fixos para exibir no dashboard
     )
 
 # Rota para a página de Nova Transação (Formulário)
@@ -368,6 +370,111 @@ def Excluir_transacao_web(id_da_transacao):
         flash("Transação não encontrada ou você não tem permissão para excluí-la.", 'erro')
     return redirect(url_for('Pagina_inicial'))
 
+# =====================
+# Rotas para Edição de Transações (EXISTENTE, APENAS COPIADO PARA CONTEXTO)
+# =====================
+
+@app.route('/editar_transacao/<int:id_da_transacao>', methods=['GET'])
+@login_required
+def Pagina_editar_transacao(id_da_transacao):
+    """Rota para exibir o formulário de edição de uma transação existente."""
+    transacao = Transacao.query.filter_by(
+        id=id_da_transacao, usuario_id=current_user.id
+    ).first()
+
+    if not transacao:
+        flash("Transação não encontrada ou você não tem permissão para editá-la.", 'erro')
+        return redirect(url_for('Pagina_inicial'))
+
+    categorias_transacoes = db.session.query(Transacao.categoria).filter_by(usuario_id=current_user.id).distinct()
+    categorias_gastos_fixos_db = db.session.query(GastoFixo.categoria).filter_by(usuario_id=current_user.id).distinct()
+    categorias_existentes = sorted(list(set([c[0] for c in categorias_transacoes] + [c[0] for c in categorias_gastos_fixos_db])))
+
+    data_transacao_iso = transacao.data_transacao.strftime('%Y-%m-%d')
+
+    return render_template(
+        'editar_transacao.html',
+        transacao=transacao,
+        categorias_existentes=categorias_existentes,
+        data_transacao_iso=data_transacao_iso
+    )
+
+
+@app.route('/atualizar_transacao/<int:id_da_transacao>', methods=['POST'])
+@login_required
+def Atualizar_transacao(id_da_transacao):
+    """Rota para atualizar uma transação existente via formulário POST."""
+    transacao_a_atualizar = Transacao.query.filter_by(
+        id=id_da_transacao, usuario_id=current_user.id
+    ).first()
+
+    if not transacao_a_atualizar:
+        flash("Transação não encontrada ou você não tem permissão para atualizá-la.", 'erro')
+        return redirect(url_for('Pagina_inicial'))
+
+    dados_fin = current_user.dados_financeiros
+
+    try:
+        # 1. Reverter o impacto da transação original no saldo
+        if transacao_a_atualizar.tipo == 'entrada':
+            dados_fin.saldo_em_caixa_total -= transacao_a_atualizar.valor
+        elif transacao_a_atualizar.tipo == 'gasto':
+            dados_fin.saldo_em_caixa_total += transacao_a_atualizar.valor
+        elif transacao_a_atualizar.tipo == 'investimento':
+            if "Aporte" in transacao_a_atualizar.descricao:
+                dados_fin.saldo_em_caixa_total += transacao_a_atualizar.valor
+                dados_fin.valor_investido_total -= transacao_a_atualizar.valor
+            elif "Resgate" in transacao_a_atualizar.descricao:
+                dados_fin.saldo_em_caixa_total -= transacao_a_atualizar.valor
+                dados_fin.valor_investido_total += transacao_a_atualizar.valor
+
+        # 2. Obter os novos dados do formulário
+        novo_tipo = request.form['tipo']
+        novo_valor = Validar_valor_numerico(request.form['valor'], 'Valor')
+        nova_descricao = request.form['descricao']
+        nova_data_transacao_str = request.form['data_transacao']
+        nova_data_transacao = datetime.strptime(nova_data_transacao_str, '%Y-%m-%d').date()
+        nova_categoria = request.form['categoria_existente']
+
+        if nova_categoria == 'nova_categoria':
+            nova_categoria = request.form['nova_categoria_nome'].strip().capitalize()
+            if not nova_categoria:
+                flash("Nome da nova categoria não pode ser vazio.", 'erro')
+                return redirect(url_for('Pagina_editar_transacao', id_da_transacao=id_da_transacao))
+
+        # 3. Atualizar o objeto da transação com os novos dados
+        transacao_a_atualizar.tipo = novo_tipo
+        transacao_a_atualizar.valor = novo_valor
+        transacao_a_atualizar.descricao = nova_descricao
+        transacao_a_atualizar.categoria = nova_categoria
+        transacao_a_atualizar.data_transacao = nova_data_transacao
+
+        # 4. Aplicar o impacto da transação atualizada no saldo
+        if transacao_a_atualizar.tipo == 'entrada':
+            dados_fin.saldo_em_caixa_total += transacao_a_atualizar.valor
+        elif transacao_a_atualizar.tipo == 'gasto':
+            dados_fin.saldo_em_caixa_total -= transacao_a_atualizar.valor
+        elif transacao_a_atualizar.tipo == 'investimento':
+            if "Aporte" in transacao_a_atualizar.descricao:
+                dados_fin.saldo_em_caixa_total -= transacao_a_atualizar.valor
+                dados_fin.valor_investido_total += transacao_a_atualizar.valor
+            elif "Resgate" in transacao_a_atualizar.descricao:
+                dados_fin.saldo_em_caixa_total += transacao_a_atualizar.valor
+                dados_fin.valor_investido_total -= transacao_a_atualizar.valor
+
+
+        db.session.commit()
+        flash("Transação atualizada com sucesso!", 'sucesso')
+        return redirect(url_for('Pagina_inicial'))
+    except ValueError as e:
+        flash(f"Falha ao atualizar transação: {e}", 'erro')
+        db.session.rollback()
+        return redirect(url_for('Pagina_editar_transacao', id_da_transacao=id_da_transacao))
+    except Exception as e:
+        flash(f"Ocorreu um erro inesperado ao atualizar transação: {e}", 'erro')
+        db.session.rollback()
+        return redirect(url_for('Pagina_editar_transacao', id_da_transacao=id_da_transacao))
+
 # Rota para a página de Adicionar Novo Gasto Fixo (Formulário)
 @app.route('/novo_gasto_fixo', methods=['GET'])
 @login_required
@@ -375,8 +482,8 @@ def Pagina_novo_gasto_fixo():
     """Rota para exibir o formulário de adição de novo gasto fixo."""
     # Obter categorias existentes do usuário
     categorias_transacoes = db.session.query(Transacao.categoria).filter_by(usuario_id=current_user.id).distinct()
-    categorias_gastos_fixos = db.session.query(GastoFixo.categoria).filter_by(usuario_id=current_user.id).distinct()
-    categorias_existentes = sorted(list(set([c[0] for c in categorias_transacoes] + [c[0] for c in categorias_gastos_fixos])))
+    categorias_gastos_fixos_db = db.session.query(GastoFixo.categoria).filter_by(usuario_id=current_user.id).distinct()
+    categorias_existentes = sorted(list(set([c[0] for c in categorias_transacoes] + [c[0] for c in categorias_gastos_fixos_db])))
 
     return render_template(
         'novo_gasto_fixo.html',
@@ -439,6 +546,87 @@ def Excluir_gasto_fixo_web(id_gasto_fixo):
     else:
         flash("Gasto fixo não encontrado ou você não tem permissão para excluí-lo.", 'erro')
     return redirect(url_for('Pagina_inicial'))
+
+# =====================
+# Rotas para Gestão de Gastos Fixos (Novas)
+# =====================
+
+@app.route('/gastos_fixos')
+@login_required
+def Pagina_gastos_fixos():
+    """Rota para exibir a lista completa de gastos fixos do usuário."""
+    todos_gastos_fixos = GastoFixo.query.filter_by(usuario_id=current_user.id).order_by(GastoFixo.descricao).all()
+    return render_template('gastos_fixos_lista.html', gastos_fixos=todos_gastos_fixos)
+
+@app.route('/editar_gasto_fixo/<int:id_gasto_fixo>', methods=['GET'])
+@login_required
+def Pagina_editar_gasto_fixo(id_gasto_fixo):
+    """Rota para exibir o formulário de edição de um gasto fixo existente."""
+    gasto_fixo_a_editar = GastoFixo.query.filter_by(
+        id=id_gasto_fixo, usuario_id=current_user.id
+    ).first()
+
+    if not gasto_fixo_a_editar:
+        flash("Gasto fixo não encontrado ou você não tem permissão para editá-lo.", 'erro')
+        return redirect(url_for('Pagina_gastos_fixos')) # Redireciona para a lista de gastos fixos
+
+    # Obter categorias existentes do usuário (para o dropdown)
+    categorias_transacoes = db.session.query(Transacao.categoria).filter_by(usuario_id=current_user.id).distinct()
+    categorias_gastos_fixos_db = db.session.query(GastoFixo.categoria).filter_by(usuario_id=current_user.id).distinct()
+    categorias_existentes = sorted(list(set([c[0] for c in categorias_transacoes] + [c[0] for c in categorias_gastos_fixos_db])))
+
+    return render_template(
+        'editar_gasto_fixo.html',
+        gasto_fixo=gasto_fixo_a_editar,
+        categorias_existentes=categorias_existentes
+    )
+
+@app.route('/atualizar_gasto_fixo/<int:id_gasto_fixo>', methods=['POST'])
+@login_required
+def Atualizar_gasto_fixo(id_gasto_fixo):
+    """Rota para atualizar um gasto fixo existente via formulário POST."""
+    gasto_fixo_a_atualizar = GastoFixo.query.filter_by(
+        id=id_gasto_fixo, usuario_id=current_user.id
+    ).first()
+
+    if not gasto_fixo_a_atualizar:
+        flash("Gasto fixo não encontrado ou você não tem permissão para atualizá-lo.", 'erro')
+        return redirect(url_for('Pagina_gastos_fixos'))
+
+    try:
+        nova_descricao = request.form['descricao_gasto_fixo']
+        novo_valor_programado = Validar_valor_numerico(request.form['valor_programado'], 'Valor Programado')
+        nova_categoria = request.form['categoria_gasto_fixo_existente']
+        novo_valor_aproximado_str = request.form.get('valor_aproximado')
+        novo_valor_aproximado = None
+
+        if novo_valor_aproximado_str:
+            novo_valor_aproximado = Validar_valor_numerico(novo_valor_aproximado_str, 'Valor Aproximado')
+
+        if nova_categoria == 'nova_categoria_gasto_fixo':
+            nova_categoria = request.form['nova_categoria_gasto_fixo_nome'].strip().capitalize()
+            if not nova_categoria:
+                flash("Nome da nova categoria de gasto fixo não pode ser vazio.", 'erro')
+                return redirect(url_for('Pagina_editar_gasto_fixo', id_gasto_fixo=id_gasto_fixo))
+
+        # Atualizar o objeto do gasto fixo com os novos dados
+        gasto_fixo_a_atualizar.descricao = nova_descricao
+        gasto_fixo_a_atualizar.valor_programado = novo_valor_programado
+        gasto_fixo_a_atualizar.categoria = nova_categoria
+        gasto_fixo_a_atualizar.valor_aproximado = novo_valor_aproximado # Pode ser None
+
+        db.session.commit()
+        flash("Gasto fixo atualizado com sucesso!", 'sucesso')
+        return redirect(url_for('Pagina_gastos_fixos')) # Redireciona para a lista após atualizar
+    except ValueError as e:
+        flash(f"Falha ao atualizar gasto fixo: {e}", 'erro')
+        db.session.rollback()
+        return redirect(url_for('Pagina_editar_gasto_fixo', id_gasto_fixo=id_gasto_fixo))
+    except Exception as e:
+        flash(f"Ocorreu um erro inesperado ao atualizar gasto fixo: {e}", 'erro')
+        db.session.rollback()
+        return redirect(url_for('Pagina_editar_gasto_fixo', id_gasto_fixo=id_gasto_fixo))
+
 
 @app.route('/investimentos')
 @login_required
@@ -529,8 +717,8 @@ def Relatorio_detalhado(tipo_relatorio):
 
     # Obter categorias existentes do usuário (únicas nas transações e gastos fixos)
     categorias_transacoes = db.session.query(Transacao.categoria).filter_by(usuario_id=current_user.id).distinct()
-    categorias_gastos_fixos = db.session.query(GastoFixo.categoria).filter_by(usuario_id=current_user.id).distinct()
-    categorias_existentes = sorted(list(set([c[0] for c in categorias_transacoes] + [c[0] for c in categorias_gastos_fixos])))
+    categorias_gastos_fixos_db = db.session.query(GastoFixo.categoria).filter_by(usuario_id=current_user.id).distinct()
+    categorias_existentes = sorted(list(set([c[0] for c in categorias_transacoes] + [c[0] for c in categorias_gastos_fixos_db])))
 
 
     titulo_do_relatorio = "Relatório de Transações"

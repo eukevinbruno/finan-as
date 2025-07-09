@@ -2,74 +2,25 @@
 // Funções de Interatividade da Página de Investimentos
 // =====================
 
+import { configurarFormatacaoValor, configurarMensagensFlash } from './utils.js'; // NOVO: Importa funções utilitárias
+
 document.addEventListener('DOMContentLoaded', function() {
-    const campoValorMovimento = document.getElementById('valor_movimento_investimento'); // Campo de valor
+    const campoValorMovimento = document.getElementById('valor_movimento_investimento');
     const btAportar = document.getElementById('bt_aportar');
     const btResgatar = document.getElementById('bt_resgatar');
     const formMovimentoInvestimento = document.getElementById('form_movimento_investimento');
     const inputTipoMovimento = document.getElementById('input_tipo_movimento');
-    const mensagensFlash = document.querySelectorAll('.mensagem');
-
-    // Variáveis globais passadas do Flask no HTML
-    // const saldoCaixaAtual = ...; // Ex: 1500.00
-    // const valorInvestidoAtual = ...; // Ex: 500.00
+    const mensagensFlash = document.querySelectorAll('.mensagem'); // Agora gerido por utils.js
 
 
     // =====================
-    // Lógica para Formatação do Campo de Valor (R$ X.XXX,XX)
+    // Aplicação das Lógicas Utilitárias
     // =====================
-    function configurarFormatacaoValor(campoInput) {
-        campoInput.addEventListener('input', function(evento) {
-            let valorPuro = evento.target.value.replace(/\D/g, '');
-            if (valorPuro === '') {
-                evento.target.value = '0,00';
-                return;
-            }
-
-            while (valorPuro.length < 3) {
-                valorPuro = '0' + valorPuro;
-            }
-
-            let parteInteira = valorPuro.substring(0, valorPuro.length - 2);
-            let parteDecimal = valorPuro.substring(valorPuro.length - 2);
-
-            if (parteInteira.length > 1 && parteInteira.startsWith('0')) {
-                 parteInteira = parseInt(parteInteira, 10).toString();
-            }
-            parteInteira = parteInteira.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-            evento.target.value = parteInteira + ',' + parteDecimal;
-        });
-
-        campoInput.addEventListener('focus', function(evento) {
-            if (evento.target.value === '') {
-                evento.target.value = '0,00';
-            }
-        });
-
-        campoInput.addEventListener('blur', function(evento) {
-            if (evento.target.value === '' || evento.target.value === ',') {
-                evento.target.value = '0,00';
-            }
-        });
-    }
-
     configurarFormatacaoValor(campoValorMovimento);
+    campoValorMovimento.value = '0,00'; // Garante que o campo de valor inicie com 0,00
 
-    // Garante que o campo de valor inicie com 0,00
-    campoValorMovimento.value = '0,00';
+    configurarMensagensFlash(mensagensFlash); // Aplica a lógica de sumir mensagens
 
-
-    // =====================
-    // Lógica para Mensagens Flash (sumir automaticamente)
-    // =====================
-    if (mensagensFlash) {
-        mensagensFlash.forEach(function(mensagem) {
-            setTimeout(function() {
-                mensagem.remove();
-            }, 5000);
-        });
-    }
 
     // =====================
     // Lógica para Movimentação de Investimento (Aporte/Resgate)
@@ -87,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Converte o valor para número para validação no frontend
         let valorNumerico = parseFloat(valor.replace('.', '').replace(',', '.'));
 
+        // Variáveis globais passadas do Flask no HTML (saldoCaixaAtual, valorInvestidoAtual)
+        // Certifique-se de que estas estão definidas no seu template HTML <script>
         if (tipo === 'aportar') {
             if (valorNumerico > saldoCaixaAtual) {
                 alert(`Saldo em caixa insuficiente para aportar R$ ${valor.replace('.', ',')}. Saldo disponível: R$ ${saldoCaixaAtual.toFixed(2).replace('.', ',')}`);
@@ -108,14 +61,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adiciona event listeners aos botões
     if (btAportar) {
         btAportar.addEventListener('click', function(e) {
-            e.preventDefault(); // Impede o envio padrão do formulário
+            e.preventDefault();
             processarMovimento('aportar');
         });
     }
 
     if (btResgatar) {
         btResgatar.addEventListener('click', function(e) {
-            e.preventDefault(); // Impede o envio padrão do formulário
+            e.preventDefault();
             processarMovimento('resgatar');
         });
     }

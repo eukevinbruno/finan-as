@@ -62,6 +62,7 @@
         const saldoCaixaAtual = {{ saldo_caixa | tojson | safe }};
         const valorInvestidoAtual = {{ valor_investido | tojson | safe }};
     </script>
-    <script src="{{ url_for('static', filename='js/investimentos.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/utils.js')}}"></script>
+    <script type="module" src="{{ url_for('static', filename='js/investimentos.js') }}"></script>
 </body>
 </html>
