@@ -51,8 +51,8 @@
 }
 
 html, body {
-    width: 100vw; /* Garante que o HTML e o Body ocupem exatamente a largura da viewport*/
-    overflow-x: hidden; /* Adicionado para evitar rolagem horizontal indesejada*/
+    width: 100vw; /* Garante que o HTML e o Body ocupem exatamente a largura da viewport */
+    overflow-x: hidden; /* Adicionado para evitar rolagem horizontal indesejada */
 }
 
 body {
@@ -72,33 +72,33 @@ body {
 .header-app {
     background-image: linear-gradient(to right, var(--cor-primaria), var(--cor-secundaria));
     color: var(--cor-texto-claro);
-    padding: 20px 20px 20px; /* AJUSTADO: Padding vertical reduzido para compactar*/
+    padding: 20px 20px 20px;
     text-align: center;
-    border-bottom-left-radius: 20px; /* AJUSTADO: Raio da borda inferior reduzido*/
-    border-bottom-right-radius: 20px; /* AJUSTADO: Raio da borda inferior reduzido*/
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
     box-shadow: var(--sombra-card);
-    margin-bottom: -10px; /* AJUSTADO: Margem negativa menor para reduzir sobreposição*/
+    margin-bottom: -10px;
     position: relative;
     z-index: 1;
     flex-shrink: 0;
 }
 
 .titulo-app {
-    font-size: 2em; /* AJUSTADO: Fonte ligeiramente menor para compactar*/
-    margin-bottom: 0; /* AJUSTADO: Remove margem inferior*/
+    font-size: 2em;
+    margin-bottom: 0;
     font-weight: 800;
     letter-spacing: -0.04em;
     color: var(--cor-texto-claro);
 }
 
-.subtitulo-app { /* Esta classe será removida do HTML nas páginas */
+.subtitulo-app {
     display: none;
 }
 
 /* Área de Navegação do Usuário no Header */
 .area-usuario-nav {
     position: absolute;
-    top: 10px; /* AJUSTADO: Posição do topo para o header menor*/
+    top: 10px;
     right: 15px;
     display: flex;
     gap: 12px;
@@ -158,7 +158,7 @@ body {
 
 
 .container {
-    max-width: 850px; /* AJUSTADO: Largura máxima para desktop aumentada*/
+    max-width: 850px; /* AJUSTADO: Largura máxima para desktop aumentada */
     margin: 0 auto;
     padding: 25px;
     position: relative;
@@ -170,54 +170,68 @@ body {
 }
 
 /* ===================== */
-/* NOVO: Saldo Principal Area (Estilo Mercado Pago) */
+/* NOVO: Bloco de Saldo e Ações Rápidas (Estilo Mercado Pago) */
 /* ===================== */
-.saldo-principal-area {
-    padding: 30px;
+.bloco-saldo-e-acoes {
     background: var(--cor-fundo-card);
     border-radius: 15px;
     box-shadow: var(--sombra-card);
-    text-align: center;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 20px;
+    gap: 0; /* Remove gap entre saldo e ações dentro do bloco */
 }
 
-.saldo-info {
+.saldo-principal-area {
+    padding: 25px 25px 15px; /* Ajuste para espaçamento interno */
     display: flex;
     flex-direction: column;
+    align-items: flex-start; /* Alinha o conteúdo à esquerda */
+}
+
+/* NOVO: Divs para organizar o Saldo em duas linhas */
+.saldo-info-primeira-linha {
+    display: flex;
+    justify-content: space-between; /* Espaço entre Saldo e link Extrato */
     align-items: center;
+    width: 100%;
+    margin-bottom: 5px; /* Espaço entre a primeira e a segunda linha */
+}
+
+.saldo-info-segunda-linha {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Alinha o valor à esquerda */
     width: 100%;
 }
 
 .label-saldo {
-    font-size: 1em;
+    font-size: 1.1em; /* Um pouco maior */
     color: var(--cor-texto-secundario);
     font-weight: 500;
-    margin-bottom: 8px;
+    margin-right: 10px;
+    white-space: nowrap;
 }
 
 .valor-e-toggle {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
+    justify-content: flex-start; /* Alinha o valor e o olho à esquerda no seu container */
+    flex-grow: 1; /* Ocupa o espaço restante */
+    max-width: fit-content;
+    gap: 8px; /* Espaço entre valor e olho */
 }
 
 .valor-saldo {
-    font-size: 2.8em;
+    font-size: 2.6em; /* Saldo grande */
     font-weight: 800;
     color: var(--cor-texto-principal);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: calc(100% - 60px);
 }
 
 .valor-saldo.oculto {
-    filter: blur(5px);
+    filter: blur(10px); /* Blur mais forte */
 }
 
 .bt-toggle-saldo {
@@ -236,65 +250,59 @@ body {
     transform: scale(1.1);
 }
 
-.bt-gerenciar-saldo {
-    background-color: var(--cor-borda-clara);
-    color: var(--cor-texto-principal);
-    padding: 12px 20px;
-    border-radius: 10px;
+.link-ir-extrato {
+    color: var(--cor-primaria);
     text-decoration: none;
-    font-size: 1em;
+    font-size: 0.95em;
     font-weight: 600;
+    white-space: nowrap;
     transition: var(--transicao-suave);
-    box-shadow: var(--sombra-botao);
-    display: inline-flex;
-    justify-content: center;
+    display: flex;
     align-items: center;
-    gap: 8px;
-    width: 100%;
-    max-width: 280px;
+    gap: 5px;
 }
 
-.bt-gerenciar-saldo:hover {
-    background-color: var(--cor-borda-foco);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
+.link-ir-extrato:hover {
+    color: var(--cor-secundaria);
+    text-decoration: underline;
 }
 
-/* ===================== */
-/* NOVO: Ações Rápidas Area (Estilo Mercado Pago) */
-/* ===================== */
+.bt-gerenciar-saldo { /* Este botão foi removido do HTML */
+    display: none;
+}
+
+
+/* Ações Rápidas Area (dentro do bloco principal) */
 .acoes-rapidas-area {
-    padding: 25px;
-    background: var(--cor-fundo-card);
-    border-radius: 15px;
-    box-shadow: var(--sombra-card);
-}
-
-.titulo-card-compacto {
-    font-size: 1.2em;
-    color: var(--cor-texto-principal);
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-weight: 700;
-    text-align: center;
+    padding: 15px 0 25px; /* Ajuste para espaçamento interno, padding horizontal zero para a lista abaixo */
+    background: var(--cor-fundo-card); /* Mesma cor de fundo do bloco principal */
+    border-top: 1px solid var(--cor-borda-clara); /* Linha divisória sutil */
 }
 
 .lista-acoes-rapidas {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Padrão para telas maiores/desktop */
-    gap: 15px;
-    justify-content: center;
-    align-items: flex-start;
+    display: flex; /* Usa flexbox para rolagem horizontal */
+    flex-wrap: nowrap; /* Impede quebra de linha */
+    overflow-x: auto; /* Habilita rolagem horizontal */
+    -webkit-overflow-scrolling: touch; /* Rolagem suave em iOS */
+    scrollbar-width: none; /* Esconde a barra de rolagem para Firefox */
+    padding: 0 25px; /* Padding para as laterais da lista, quebra da largura do bloco */
+    gap: 15px; /* Espaçamento entre os itens */
+}
+
+.lista-acoes-rapidas::-webkit-scrollbar {
+    display: none; /* Esconde a barra de rolagem para navegadores WebKit (Chrome, Safari) */
 }
 
 .acao-rapida-item {
+    flex-shrink: 0; /* Impede que os itens encolham */
+    width: 85px; /* Largura fixa para cada item na rolagem */
     display: flex;
     flex-direction: column;
     align-items: center;
     text-decoration: none;
     color: var(--cor-texto-principal);
     transition: var(--transicao-suave);
-    padding: 10px 5px;
+    padding: 10px 0; /* Ajuste de padding interno */
     border-radius: 10px;
 }
 
@@ -323,7 +331,7 @@ body {
 }
 
 .texto-acao {
-    font-size: 0.9em;
+    font-size: 0.85em;
     font-weight: 600;
     text-align: center;
     line-height: 1.2;
@@ -621,6 +629,7 @@ body {
 .bt-voltar:hover {
     background-color: var(--cor-borda-foco);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
 }
 
 
@@ -969,7 +978,7 @@ body {
 .item-relatorio-detalhado.gasto .valor-relatorio {
     color: var(--cor-erro);
 }
-/* Estilos para Transações de Investimento no histórico*/
+/* Estilos para Transações de Investimento no histórico */
 .item-transacao.investimento .valor-transacao,
 .item-relatorio-detalhado.investimento .valor-relatorio {
     color: var(--cor-investimento);
@@ -1150,12 +1159,12 @@ body {
 
     .container {
         max-width: 95%; /* Container ocupa 95% da largura da tela */
-        padding: 20px;
+        padding: 20px 15px; /* AJUSTADO: Padding horizontal reduzido */
         margin: 0 auto;
         gap: 20px;
     }
     .card {
-        padding: 25px;
+        padding: 25px 20px; /* AJUSTADO: Padding horizontal reduzido */
         border-radius: 12px;
     }
     .titulo-card {
@@ -1172,8 +1181,13 @@ body {
     }
 
     .saldo-principal-area {
-        padding: 25px;
-        gap: 15px;
+        padding: 25px 25px 15px; /* Manter padding específico, ajustar vertical */
+    }
+    .saldo-info-primeira-linha {
+        margin-bottom: 5px; /* Manter espaçamento */
+    }
+    .saldo-info-segunda-linha {
+        justify-content: flex-start; /* Alinhar à esquerda para mais espaço */
     }
     .valor-saldo {
         font-size: 2.5em;
@@ -1185,15 +1199,11 @@ body {
     }
 
     .acoes-rapidas-area {
-        padding: 20px;
-    }
-    .titulo-card-compacto {
-        font-size: 1.1em;
-        margin-bottom: 15px;
+        padding: 15px 0 25px;
     }
     .lista-acoes-rapidas {
         grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-        gap: 10px;
+        padding: 0 15px; /* Ajustar padding lateral da lista */
     }
     .icone-acao {
         width: 50px;
@@ -1371,12 +1381,12 @@ body {
 
     .container {
         max-width: 95%;
-        padding: 15px;
+        padding: 15px 10px; /* AJUSTADO: Padding horizontal reduzido */
         margin: 0 auto;
         gap: 15px;
     }
     .card {
-        padding: 18px;
+        padding: 18px 14px; /* AJUSTADO: Padding horizontal reduzido */
         border-radius: 10px;
     }
     .titulo-card {
@@ -1388,8 +1398,13 @@ body {
     }
 
     .saldo-principal-area {
-        padding: 20px 15px;
-        gap: 10px;
+        padding: 20px 15px 10px; /* Ajuste para espaçamento interno */
+    }
+    .saldo-info-primeira-linha {
+        margin-bottom: 5px; /* Manter espaçamento */
+    }
+    .saldo-info-segunda-linha {
+        justify-content: flex-start; /* Alinhar à esquerda para mais espaço */
     }
     .valor-saldo {
         font-size: 2.2em;
@@ -1404,24 +1419,33 @@ body {
     }
 
     .acoes-rapidas-area {
-        padding: 15px;
-    }
-    .titulo-card-compacto {
-        font-size: 1em;
-        margin-bottom: 12px;
+        padding: 10px 0 15px; /* Ajuste de padding */
+        border-top: none; /* Remove a linha divisória aqui */
     }
     .lista-acoes-rapidas {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        grid-template-columns: unset; /* Remove grid for forced flex */
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 0 15px; /* Ajuste de padding lateral da lista */
+        gap: 10px; /* Ajuste de gap */
+    }
+    .lista-acoes-rapidas::-webkit-scrollbar {
+        display: none;
+    }
+    .acao-rapida-item {
+        flex-shrink: 0; /* Impede encolhimento */
+        width: 80px; /* Largura fixa para mobile menor */
     }
     .icone-acao {
-        width: 60px;
-        height: 60px;
-        font-size: 2em;
-        margin-bottom: 8px;
+        width: 55px;
+        height: 55px;
+        font-size: 1.8em;
     }
     .texto-acao {
-        font-size: 0.85em;
+        font-size: 0.8em;
     }
 
     .detalhes-balanco p {

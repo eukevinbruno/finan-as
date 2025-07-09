@@ -244,7 +244,7 @@ def Pagina_inicial():
     # Obter últimas transações do usuário logado (ordenadas por data e ID)
     transacoes_para_exibir = Transacao.query.filter_by(
         usuario_id=current_user.id
-    ).order_by(Transacao.data_transacao.desc(), Transacao.id.asc()).limit(7).all()
+    ).order_by(Transacao.data_transacao.desc(), Transacao.id.desc()).limit(7).all()
 
     # Obter categorias existentes do usuário (únicas nas transações e gastos fixos)
     categorias_transacoes = db.session.query(Transacao.categoria).filter_by(usuario_id=current_user.id).distinct()
@@ -326,7 +326,7 @@ def Excluir_transacao_web(id_da_transacao):
             dados_fin.saldo_em_caixa_total -= transacao_a_excluir.valor
         elif transacao_a_excluir.tipo == 'gasto':
             dados_fin.saldo_em_caixa_total += transacao_a_excluir.valor
-        # NOVO: Reverter o impacto de transações de investimento
+        # Reverter o impacto de transações de investimento
         elif transacao_a_excluir.tipo == 'investimento':
             # Se a descrição indicar que foi um "Aporte", o dinheiro saiu do caixa e foi para o investimento
             if "Aporte" in transacao_a_excluir.descricao:
@@ -446,7 +446,7 @@ def Movimentar_investimento():
             flash("Tipo de movimento inválido.", 'erro')
             return redirect(url_for('Pagina_investimentos'))
 
-        # NOVO: Criar uma Transacao para o movimento de investimento
+        # Criar uma Transacao para o movimento de investimento
         nova_transacao_investimento = Transacao(
             tipo='investimento', # Novo tipo para identificar no histórico
             valor=valor_movimento,
@@ -473,7 +473,7 @@ def Movimentar_investimento():
 def Relatorio_detalhado(tipo_relatorio):
     """Rota para exibir relatórios detalhados de entradas ou gastos por categoria."""
     # Obter todas as transações do usuário logado (ordenadas por data e ID)
-    todas_as_transacoes_obj = Transacao.query.filter_by(usuario_id=current_user.id).order_by(Transacao.data_transacao.desc(), Transacao.id.asc()).all()
+    todas_as_transacoes_obj = Transacao.query.filter_by(usuario_id=current_user.id).order_by(Transacao.data_transacao.desc(), Transacao.id.desc()).all()
     # Converte para um formato compatível com o JavaScript (lista de dicionários)
     todas_as_transacoes_para_js = [
         {
@@ -511,7 +511,7 @@ def Relatorio_detalhado(tipo_relatorio):
 def Pagina_extrato():
     """Rota para exibir o extrato detalhado de transações."""
     # Obter todas as transações do usuário logado (ordenadas por data e ID)
-    todas_as_transacoes_obj = Transacao.query.filter_by(usuario_id=current_user.id).order_by(Transacao.data_transacao.desc(), Transacao.id.asc()).all()
+    todas_as_transacoes_obj = Transacao.query.filter_by(usuario_id=current_user.id).order_by(Transacao.data_transacao.desc(), Transacao.id.desc()).all()
 
     todas_as_transacoes_para_js = [
         {
@@ -537,6 +537,11 @@ def Pagina_extrato():
     total_gastos_mes = sum(t.valor for t in transacoes_mes_atual if t.tipo == 'gasto')
     saldo_liquido_mensal = total_entradas_mes - total_gastos_mes
 
+    # NOVO: Calcular movimentação de investimento do mês para o extrato
+    total_aportes_mensal = sum(t.valor for t in transacoes_mes_atual if t.tipo == 'investimento' and 'Aporte' in t.descricao)
+    total_resgates_mensal = sum(t.valor for t in transacoes_mes_atual if t.tipo == 'investimento' and 'Resgate' in t.descricao)
+    net_movimento_investimento_mensal = total_aportes_mensal - total_resgates_mensal
+
     return render_template(
         'extrato.html',
         nome_usuario_logado=current_user.nome_de_usuario,
@@ -544,6 +549,10 @@ def Pagina_extrato():
         total_entradas=total_entradas_mes,
         total_gastos=total_gastos_mes,
         saldo_liquido_mensal=saldo_liquido_mensal,
+        # NOVO: Passa os dados de investimento mensal para o template
+        total_aportes_mensal=total_aportes_mensal,
+        total_resgates_mensal=total_resgates_mensal,
+        net_movimento_investimento_mensal=net_movimento_investimento_mensal,
         tipo_relatorio='todos'
     )
 

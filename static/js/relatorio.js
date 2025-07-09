@@ -11,9 +11,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const mensagemVaziaRelatorio = document.getElementById('mensagem_vazia_relatorio');
 
     // Variáveis globais (definidas no HTML com Jinja)
-    // const todasAsTransacoes = ...; // Já é um array de objetos com data como string 'YYYY-MM-DD'
+    // const todasAsTransacoes = ...;
     // const tipoRelatorioInicial = ...;
-    // NOVO: totalEntradasMensal e totalGastosMensal para o gráfico do extrato
+    // const totalEntradasMensal = ...;
+    // const totalGastosMensal = ...;
+    // const totalAportesMensal = ...; // NOVO: Disponível
+    // const totalResgatesMensal = ...; // NOVO: Disponível
+    // const netMovimentoInvestimentoMensal = ...; // NOVO: Disponível
+
 
     function Formatar_data_para_exibicao(data_iso) {
         const partes = data_iso.split('-'); // Espera 'AAAA-MM-DD'
@@ -29,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (tipoRelatorioInicial === 'gastos') {
             transacoes_filtradas_por_tipo = transacoes_para_exibir.filter(t => t.tipo === 'gasto');
         } else {
+            // Inclui todas as transações, incluindo as de 'investimento'
             transacoes_filtradas_por_tipo = transacoes_para_exibir;
         }
 
@@ -41,15 +47,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Ordena as transações por data (mais recente primeiro)
         const transacoes_ordenadas = [...transacoes_filtradas_por_tipo].sort((a, b) => {
-            return new Date(b.data) - new Date(a.data);
+            // Assume que 'a.data' e 'b.data' já são strings 'YYYY-MM-DD' para comparação direta
+            if (a.data < b.data) return 1;
+            if (a.data > b.data) return -1;
+            // Se as datas são iguais, usa o ID como desempate (maior ID = mais recente)
+            return b.id - a.id;
         });
 
         transacoes_ordenadas.forEach(transacao => {
             const li = document.createElement('li');
             li.classList.add('item-relatorio-detalhado');
-            li.classList.add(transacao.tipo);
+            li.classList.add(transacao.tipo); // Adiciona a classe 'investimento' se for o caso
 
-            const sinal = transacao.tipo === 'entrada' ? '+' : '-';
+            let sinal = '';
+            if (transacao.tipo === 'entrada') {
+                sinal = '+';
+            } else if (transacao.tipo === 'gasto') {
+                sinal = '-';
+            } else if (transacao.tipo === 'investimento') {
+                sinal = '*'; // Sinal para investimento
+            }
+
             const valorFormatado = new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
@@ -74,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const anoAtual = hoje.getFullYear();
 
         const transacoesDoMes = todasAsTransacoes.filter(transacao => {
-            const dataTransacao = new Date(transacao.data); // Converte a string YYYY-MM-DD para objeto Date
+            const dataTransacao = new Date(transacao.data); // Converte a string 'YYYY-MM-DD' para objeto Date
             return dataTransacao.getMonth() === mesAtual && dataTransacao.getFullYear() === anoAtual;
         });
         Renderizar_transacoes(transacoesDoMes);
@@ -107,42 +125,54 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // =====================
-    // Gráfico Circular de Balanço Mensal (agora no relatorio.js)
+    // Gráfico Circular de Balanço Mensal (agora no relatorio.js com Investimentos)
     // =====================
     const ctxMensal = document.getElementById('graficoCircularMensal');
-    if (ctxMensal) { // Verifica se o canvas existe na página
-        // totalEntradasMensal e totalGastosMensal são passadas via Jinja2 no extrato.html
-        const totalMensalParaGrafico = totalEntradasMensal + totalGastosMensal;
+    if (ctxMensal) {
+        // totalEntradasMensal, totalGastosMensal, netMovimentoInvestimentoMensal são passadas via Jinja2
+        const absNetInvestimentoMensal = Math.abs(netMovimentoInvestimentoMensal); // Usa valor absoluto para o tamanho da fatia
+
+        // O "todo" para o gráfico agora inclui entradas, gastos e a movimentação líquida de investimentos
+        const totalMensalParaGrafico = totalEntradasMensal + totalGastosMensal + absNetInvestimentoMensal;
 
         let percentualEntradasMensal = 0;
         let percentualGastosMensal = 0;
+        let percentualInvestimentoMensal = 0;
 
         const corEntrada = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-entrada').trim();
         const corGasto = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-gasto').trim();
+        const corInvestimento = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-investimento').trim();
 
         if (totalMensalParaGrafico > 0) {
             percentualEntradasMensal = (totalEntradasMensal / totalMensalParaGrafico) * 100;
             percentualGastosMensal = (totalGastosMensal / totalMensalParaGrafico) * 100;
+            if (absNetInvestimentoMensal > 0) {
+                percentualInvestimentoMensal = (absNetInvestimentoMensal / totalMensalParaGrafico) * 100;
+            }
         }
 
         const dataGraficoMensal = [];
         const coresGraficoMensal = [];
         const labelsGraficoMensal = [];
 
-        if (percentualEntradasMensal > 0) {
-            dataGraficoMensal.push(percentualEntradasMensal);
-            coresGraficoMensal.push(corEntrada);
-            labelsGraficoMensal.push('Entradas');
-        }
+        // Adiciona os dados ao gráfico apenas se o percentual for maior que 0
         if (percentualGastosMensal > 0) {
             dataGraficoMensal.push(percentualGastosMensal);
             coresGraficoMensal.push(corGasto);
             labelsGraficoMensal.push('Gastos');
         }
+        if (percentualEntradasMensal > 0) {
+            dataGraficoMensal.push(percentualEntradasMensal);
+            coresGraficoMensal.push(corEntrada);
+            labelsGraficoMensal.push('Entradas');
+        }
+        if (percentualInvestimentoMensal > 0) {
+            dataGraficoMensal.push(percentualInvestimentoMensal);
+            coresGraficoMensal.push(corInvestimento);
+            labelsGraficoMensal.push('Investimentos (Líquido)'); // Novo label para a fatia
+        }
 
         if (dataGraficoMensal.length === 0) {
-            // Se não houver dados, exibe uma mensagem no lugar do gráfico
-            // Ajusta o padding para que a mensagem não fique muito espremida
             const parentDiv = ctxMensal.parentNode;
             if (parentDiv) {
                 parentDiv.innerHTML = '<p class="mensagem-vazia" style="padding: 20px;">Nenhum dado para o balanço do mês.</p>';
@@ -174,7 +204,21 @@ document.addEventListener('DOMContentLoaded', function() {
                                     if (label) {
                                         label += ': ';
                                     }
-                                    return label + context.raw.toFixed(2) + '%';
+                                    let value = context.raw.toFixed(2) + '%'; // Valor percentual
+
+                                    // Personaliza o tooltip para a fatia de Investimentos
+                                    if (context.label === 'Investimentos (Líquido)') {
+                                        let prefixo = '';
+                                        if (netMovimentoInvestimentoMensal > 0) {
+                                            prefixo = 'Aporte Líquido: ';
+                                        } else if (netMovimentoInvestimentoMensal < 0) {
+                                            prefixo = 'Resgate Líquido: ';
+                                        }
+                                        label = prefixo + value;
+                                    } else {
+                                        label += value;
+                                    }
+                                    return label;
                                 }
                             }
                         }
