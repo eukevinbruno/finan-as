@@ -60,10 +60,10 @@ class DadosFinanceiros(db.Model):
         return f"DadosFinanceiros(Saldo: {self.saldo_em_caixa_total}, Investido: {self.valor_investido_total})"
 
 class Transacao(db.Model):
-    """Representa uma única transação financeira (entrada ou gasto)."""
+    """Representa uma única transação financeira (entrada, gasto ou investimento)."""
     __tablename__ = 'transacoes'
     id = db.Column(db.Integer, primary_key=True)
-    tipo = db.Column(db.String(10), nullable=False) # 'entrada' ou 'gasto'
+    tipo = db.Column(db.String(15), nullable=False) # Aumentado o tamanho para 'investimento'
     valor = db.Column(db.Float, nullable=False)
     descricao = db.Column(db.String(200), nullable=True)
     categoria = db.Column(db.String(50), nullable=False)
@@ -142,8 +142,6 @@ def formatar_moeda_filter(valor):
 # Rotas de Autenticação (Novas)
 # =====================
 
-# Na rota Pagina_registro em app.py, altere:
-
 @app.route('/registro', methods=['GET', 'POST'])
 def Pagina_registro():
     """Rota para registro de novos usuários."""
@@ -170,22 +168,14 @@ def Pagina_registro():
         novo_usuario = Usuario(nome_de_usuario=nome_de_usuario)
         novo_usuario.Setar_senha(senha)
 
-        # Crie a instância de DadosFinanceiros sem o argumento 'usuario'
         novos_dados_financeiros = DadosFinanceiros(
             saldo_em_caixa_total=0.0,
             valor_investido_total=0.0
         )
 
-        # Associe o DadosFinanceiros ao novo_usuario através da relação
         novo_usuario.dados_financeiros = novos_dados_financeiros
 
         db.session.add(novo_usuario)
-        # Não precisamos adicionar explicitamente novos_dados_financeiros separadamente,
-        # pois ele será "cascateado" (adicionado automaticamente) quando novo_usuario for adicionado,
-        # devido ao relacionamento definido com backref.
-        # No entanto, adicioná-lo explicitamente não causa erro e é mais claro para iniciantes.
-        # db.session.add(novos_dados_financeiros) # Pode ser removido
-
         db.session.commit()
         flash("Sua conta foi criada com sucesso! Faça login para começar.", 'sucesso')
         return redirect(url_for('Pagina_login'))
@@ -240,21 +230,21 @@ def Pagina_inicial():
         db.extract('year', Transacao.data_transacao) == hoje.year
     ).all()
 
+    # As transações de investimento NÃO são incluídas nesses totais
     total_entradas_mes = sum(t.valor for t in transacoes_mes_atual if t.tipo == 'entrada')
     total_gastos_mes = sum(t.valor for t in transacoes_mes_atual if t.tipo == 'gasto')
-    
-    # NOVO: Calcular o saldo líquido do mês
+
+    # Calcular o saldo líquido do mês
     saldo_liquido_mensal = total_entradas_mes - total_gastos_mes
 
     # Saldo em caixa e investimento são obtidos dos DadosFinanceiros do usuário
     saldo_caixa = dados_fin.saldo_em_caixa_total
     valor_investido = dados_fin.valor_investido_total
 
-    # Obter últimas transações do usuário logado (ordenadas por data)
-    # A limitação para as 7 últimas transações será feita diretamente no query
+    # Obter últimas transações do usuário logado (ordenadas por data e ID)
     transacoes_para_exibir = Transacao.query.filter_by(
         usuario_id=current_user.id
-    ).order_by(Transacao.data_transacao.desc()).limit(7).all()
+    ).order_by(Transacao.data_transacao.desc(), Transacao.id.asc()).limit(7).all()
 
     # Obter categorias existentes do usuário (únicas nas transações e gastos fixos)
     categorias_transacoes = db.session.query(Transacao.categoria).filter_by(usuario_id=current_user.id).distinct()
@@ -269,7 +259,7 @@ def Pagina_inicial():
         transacoes=transacoes_para_exibir,
         total_entradas=total_entradas_mes,
         total_gastos=total_gastos_mes,
-        saldo_liquido_mensal=saldo_liquido_mensal, # Passa o novo valor para o template
+        saldo_liquido_mensal=saldo_liquido_mensal,
         saldo_caixa=saldo_caixa,
         valor_investido=valor_investido,
         categorias_existentes=categorias_existentes,
@@ -336,6 +326,17 @@ def Excluir_transacao_web(id_da_transacao):
             dados_fin.saldo_em_caixa_total -= transacao_a_excluir.valor
         elif transacao_a_excluir.tipo == 'gasto':
             dados_fin.saldo_em_caixa_total += transacao_a_excluir.valor
+        # NOVO: Reverter o impacto de transações de investimento
+        elif transacao_a_excluir.tipo == 'investimento':
+            # Se a descrição indicar que foi um "Aporte", o dinheiro saiu do caixa e foi para o investimento
+            if "Aporte" in transacao_a_excluir.descricao:
+                dados_fin.saldo_em_caixa_total += transacao_a_excluir.valor # Retorna o dinheiro para o caixa
+                dados_fin.valor_investido_total -= transacao_a_excluir.valor # Reduz o valor investido
+            # Se a descrição indicar que foi um "Resgate", o dinheiro saiu do investimento e foi para o caixa
+            elif "Resgate" in transacao_a_excluir.descricao:
+                dados_fin.saldo_em_caixa_total -= transacao_a_excluir.valor # Remove o dinheiro do caixa
+                dados_fin.valor_investido_total += transacao_a_excluir.valor # Aumenta o valor investido
+
 
         db.session.delete(transacao_a_excluir)
         db.session.commit()
@@ -422,6 +423,9 @@ def Movimentar_investimento():
     try:
         valor_movimento = Validar_valor_numerico(request.form['valor_movimento'], 'Valor da Movimentação')
 
+        descricao_transacao_historico = ""
+        categoria_transacao_historico = "Investimento" # Categoria padrão para histórico de investimento
+
         if tipo_movimento == 'aportar':
             if dados_fin.saldo_em_caixa_total < valor_movimento:
                 flash("Saldo em caixa insuficiente para este aporte.", 'erro')
@@ -429,6 +433,7 @@ def Movimentar_investimento():
             dados_fin.saldo_em_caixa_total -= valor_movimento
             dados_fin.valor_investido_total += valor_movimento
             flash(f"R$ {valor_movimento:,.2f} aportados com sucesso no investimento!".replace(",", "X").replace(".", ",").replace("X", "."), 'sucesso')
+            descricao_transacao_historico = "Aporte em Investimento" # Descrição para o histórico
         elif tipo_movimento == 'resgatar':
             if dados_fin.valor_investido_total < valor_movimento:
                 flash("Valor investido insuficiente para este resgate.", 'erro')
@@ -436,9 +441,21 @@ def Movimentar_investimento():
             dados_fin.valor_investido_total -= valor_movimento
             dados_fin.saldo_em_caixa_total += valor_movimento
             flash(f"R$ {valor_movimento:,.2f} resgatados com sucesso do investimento!".replace(",", "X").replace(".", ",").replace("X", "."), 'sucesso')
+            descricao_transacao_historico = "Resgate de Investimento" # Descrição para o histórico
         else:
             flash("Tipo de movimento inválido.", 'erro')
             return redirect(url_for('Pagina_investimentos'))
+
+        # NOVO: Criar uma Transacao para o movimento de investimento
+        nova_transacao_investimento = Transacao(
+            tipo='investimento', # Novo tipo para identificar no histórico
+            valor=valor_movimento,
+            descricao=descricao_transacao_historico,
+            categoria=categoria_transacao_historico,
+            data_transacao=datetime.now().date(), # Data atual do movimento
+            usuario_id=current_user.id
+        )
+        db.session.add(nova_transacao_investimento) # Adiciona ao banco de dados
 
         db.session.commit()
 
@@ -455,8 +472,8 @@ def Movimentar_investimento():
 @login_required
 def Relatorio_detalhado(tipo_relatorio):
     """Rota para exibir relatórios detalhados de entradas ou gastos por categoria."""
-    # Obter todas as transações do usuário logado
-    todas_as_transacoes_obj = Transacao.query.filter_by(usuario_id=current_user.id).order_by(Transacao.data_transacao.desc()).all()
+    # Obter todas as transações do usuário logado (ordenadas por data e ID)
+    todas_as_transacoes_obj = Transacao.query.filter_by(usuario_id=current_user.id).order_by(Transacao.data_transacao.desc(), Transacao.id.asc()).all()
     # Converte para um formato compatível com o JavaScript (lista de dicionários)
     todas_as_transacoes_para_js = [
         {
@@ -479,7 +496,7 @@ def Relatorio_detalhado(tipo_relatorio):
     if tipo_relatorio == 'entradas':
         titulo_do_relatorio = "Relatório Detalhado de Entradas"
     elif tipo_relatorio == 'gastos':
-        titulo_do_relatorio = "Relatório Detalhado de Gastos"
+        titulo_do_relatorio = "Relatorio Detalhado de Gastos"
 
     return render_template(
         'relatorio.html',
@@ -489,12 +506,53 @@ def Relatorio_detalhado(tipo_relatorio):
         categorias_existentes=categorias_existentes
     )
 
+@app.route('/extrato')
+@login_required
+def Pagina_extrato():
+    """Rota para exibir o extrato detalhado de transações."""
+    # Obter todas as transações do usuário logado (ordenadas por data e ID)
+    todas_as_transacoes_obj = Transacao.query.filter_by(usuario_id=current_user.id).order_by(Transacao.data_transacao.desc(), Transacao.id.asc()).all()
+
+    todas_as_transacoes_para_js = [
+        {
+            'id': t.id,
+            'tipo': t.tipo,
+            'valor': t.valor,
+            'descricao': t.descricao,
+            'categoria': t.categoria,
+            'data': t.data_transacao.strftime('%Y-%m-%d')
+        } for t in todas_as_transacoes_obj
+    ]
+
+    hoje = datetime.now()
+    transacoes_mes_atual = Transacao.query.filter_by(
+        usuario_id=current_user.id
+    ).filter(
+        db.extract('month', Transacao.data_transacao) == hoje.month,
+        db.extract('year', Transacao.data_transacao) == hoje.year
+    ).all()
+
+    # As transações de investimento NÃO são incluídas nesses totais para o balanço do mês
+    total_entradas_mes = sum(t.valor for t in transacoes_mes_atual if t.tipo == 'entrada')
+    total_gastos_mes = sum(t.valor for t in transacoes_mes_atual if t.tipo == 'gasto')
+    saldo_liquido_mensal = total_entradas_mes - total_gastos_mes
+
+    return render_template(
+        'extrato.html',
+        nome_usuario_logado=current_user.nome_de_usuario,
+        todas_as_transacoes=todas_as_transacoes_para_js,
+        total_entradas=total_entradas_mes,
+        total_gastos=total_gastos_mes,
+        saldo_liquido_mensal=saldo_liquido_mensal,
+        tipo_relatorio='todos'
+    )
+
 # =====================
 # Execução Principal
 # =====================
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all() # Cria as tabelas do banco de dados (se não existirem)
+        db.create_all()
     app.run(
         host='192.168.2.222',
         port='95432',

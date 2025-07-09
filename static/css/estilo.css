@@ -1,188 +1,434 @@
 /* ===================== */
-/* Variáveis de Cores */
+/* Variáveis de Cores (NOVA PALETA) */
 /* ===================== */
 :root {
-    --cor-primaria: #6C5CE7; /* Um roxo vibrante e moderno */
-    --cor-secundaria: #4F38D9; /* Um roxo mais escuro */
-    --cor-fundo: #F5F7FA; /* Cinza muito claro para o fundo */
-    --cor-card-fundo: #ffffff;
-    --cor-texto-principal: #333333;
-    --cor-texto-secundario: #666666;
-    --cor-sucesso: #28a745; /* Verde para entradas */
-    --cor-erro: #dc3545; /* Vermelho para gastos */
-    --cor-investimento: #007bff; /* Azul para investimentos */
-    --cor-borda-clara: #e0e0e0;
-    --cor-borda-escura: #cccccc;
-    --cor-btn-secundario: #E8EAF6; /* Azul claro suave para botões secundários */
-    --cor-btn-secundario-hover: #D7DAE9; /* Um pouco mais escuro no hover */
-    --cor-grafico-entrada: #28a745; /* Verde para entrada no gráfico */
-    --cor-grafico-gasto: #dc3545; /* Vermelho para gasto no gráfico */
-    --cor-grafico-investimento: #007bff; /* Azul para investimento no gráfico */
+    /* Cores Primárias e de Destaque */
+    --cor-primaria: #6C63FF; /* Um roxo suave e moderno */
+    --cor-secundaria: #5B52D8; /* Versão mais escura da primária */
+    --cor-acento: #A5A0FF;   /* Um tom mais claro da primária para detalhes */
 
-    /* Novas variáveis para sombras */
-    --sombra-card: 0 4px 15px rgba(0, 0, 0, 0.08); /* Sombra mais pronunciada e suave */
-    --sombra-botao: 0 2px 5px rgba(0, 0, 0, 0.1);
-    --sombra-foco: 0 0 0 4px rgba(108, 92, 231, 0.25); /* Sombra de foco mais sutil */
+    /* Cores Neutras e de Fundo */
+    --cor-fundo-geral: #F8F9FA; /* Cinza muito claro, quase branco (background sutil) */
+    --cor-fundo-card: #FFFFFF; /* Branco puro para os cards */
+    --cor-borda-clara: #E9ECEF; /* Borda suave e discreta */
+    --cor-borda-foco: #ADB5BD; /* Borda um pouco mais escura para foco */
+
+    /* Cores de Texto */
+    --cor-texto-principal: #343A40; /* Preto escuro para boa legibilidade */
+    --cor-texto-secundario: #6C757D; /* Cinza médio para texto secundário/labels */
+    --cor-texto-claro: #F8F9FA; /* Usado em fundos escuros, quase branco */
+
+    /* Cores de Status e Ações */
+    --cor-sucesso: #28A745; /* Verde para entradas/sucesso */
+    --cor-sucesso-hover: #218838;
+    --cor-erro: #DC3545; /* Vermelho para gastos/erros */
+    --cor-erro-hover: #C82333;
+    --cor-investimento: #007BFF; /* Azul para investimentos */
+    --cor-investimento-hover: #0056b3;
+    --cor-info: #17A2B8; /* Ciano para informações */
+
+    /* Cores do Gráfico (adaptadas à nova paleta) */
+    --cor-grafico-caixa: #6C63FF; /* Primária para Saldo em Caixa */
+    --cor-grafico-investimento: #007BFF; /* Azul para Valor Investido */
+    --cor-grafico-entrada: #28A745; /* Verde para Entradas no gráfico */
+    --cor-grafico-gasto: #DC3545; /* Vermelho para Gastos no gráfico */
+
+    /* Sombras e Efeitos */
+    --sombra-card: 0 5px 15px rgba(0, 0, 0, 0.08); /* Sombra mais sutil e moderna */
+    --sombra-card-hover: 0 10px 25px rgba(0, 0, 0, 0.12); /* Aumenta no hover */
+    --sombra-botao: 0 3px 8px rgba(0, 0, 0, 0.1);
+    --sombra-foco: 0 0 0 0.2rem rgba(108, 99, 255, 0.25); /* Foco mais suave */
+
+    /* Transições Padrão */
+    --transicao-suave: all 0.3s ease-out; /* Transição mais rápida e suave no final */
 }
 
 /* ===================== */
-/* Estilos Gerais */
+/* Estilos Gerais (Reset e Base) */
 /* ===================== */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100vw; /* Garante que o HTML e o Body ocupem exatamente a largura da viewport*/
+    overflow-x: hidden; /* Adicionado para evitar rolagem horizontal indesejada*/
+}
+
 body {
     font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: var(--cor-fundo);
+    background-color: var(--cor-fundo-geral);
     color: var(--cor-texto-principal);
-    line-height: 1.6;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .header-app {
-    background-image: linear-gradient(to right, var(--cor-primaria), var(--cor-secundaria)); /* Gradiente sutil */
-    color: white;
-    padding: 40px 20px 80px;
+    background-image: linear-gradient(to right, var(--cor-primaria), var(--cor-secundaria));
+    color: var(--cor-texto-claro);
+    padding: 20px 20px 20px; /* AJUSTADO: Padding vertical reduzido para compactar*/
     text-align: center;
-    border-bottom-left-radius: 50px;
-    border-bottom-right-radius: 50px;
-    box-shadow: var(--sombra-card); /* Aplica a nova sombra */
-    margin-bottom: -50px;
+    border-bottom-left-radius: 20px; /* AJUSTADO: Raio da borda inferior reduzido*/
+    border-bottom-right-radius: 20px; /* AJUSTADO: Raio da borda inferior reduzido*/
+    box-shadow: var(--sombra-card);
+    margin-bottom: -10px; /* AJUSTADO: Margem negativa menor para reduzir sobreposição*/
     position: relative;
     z-index: 1;
+    flex-shrink: 0;
 }
 
 .titulo-app {
-    font-size: 2.2em;
-    margin-bottom: 5px;
-    font-weight: 700;
+    font-size: 2em; /* AJUSTADO: Fonte ligeiramente menor para compactar*/
+    margin-bottom: 0; /* AJUSTADO: Remove margem inferior*/
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--cor-texto-claro);
 }
 
-.subtitulo-app {
-    font-size: 1em;
-    opacity: 0.9;
+.subtitulo-app { /* Esta classe será removida do HTML nas páginas */
+    display: none;
 }
 
-/* Estilo para Área de Navegação do Usuário no Header */
+/* Área de Navegação do Usuário no Header */
 .area-usuario-nav {
     position: absolute;
-    top: 15px;
-    right: 20px;
+    top: 10px; /* AJUSTADO: Posição do topo para o header menor*/
+    right: 15px;
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .nome-usuario-logado {
-    font-size: 0.9em;
+    font-size: 0.95em;
     font-weight: 500;
     margin: 0;
-    padding: 5px 10px;
+    padding: 7px 14px;
     background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 5px;
+    border-radius: 7px;
+    color: var(--cor-texto-claro);
 }
 
 .bt-nav-usuario {
-    color: white;
+    color: var(--cor-texto-claro);
     text-decoration: none;
-    font-size: 0.9em;
+    font-size: 0.95em;
     font-weight: 600;
-    padding: 5px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 5px;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    padding: 7px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 7px;
+    transition: var(--transicao-suave);
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 7px;
 }
 
 .bt-nav-usuario:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-color: white;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: var(--cor-texto-claro);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
+.link-logout {
+    color: var(--cor-texto-claro);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transicao-suave);
+}
+.link-logout:hover {
+    opacity: 0.9;
+    text-decoration: underline;
+}
+
+.info-usuario-logado {
+    color: var(--cor-texto-claro);
+    font-size: 1em;
+    margin-top: 18px;
+    opacity: 0.95;
+}
+
+
 .container {
-    max-width: 600px;
+    max-width: 850px; /* AJUSTADO: Largura máxima para desktop aumentada*/
     margin: 0 auto;
-    padding: 20px;
+    padding: 25px;
     position: relative;
     z-index: 2;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
 }
+
+/* ===================== */
+/* NOVO: Saldo Principal Area (Estilo Mercado Pago) */
+/* ===================== */
+.saldo-principal-area {
+    padding: 30px;
+    background: var(--cor-fundo-card);
+    border-radius: 15px;
+    box-shadow: var(--sombra-card);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.saldo-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.label-saldo {
+    font-size: 1em;
+    color: var(--cor-texto-secundario);
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.valor-e-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.valor-saldo {
+    font-size: 2.8em;
+    font-weight: 800;
+    color: var(--cor-texto-principal);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 60px);
+}
+
+.valor-saldo.oculto {
+    filter: blur(5px);
+}
+
+.bt-toggle-saldo {
+    background: none;
+    border: none;
+    color: var(--cor-texto-secundario);
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: var(--transicao-suave);
+    padding: 0;
+    line-height: 1;
+}
+
+.bt-toggle-saldo:hover {
+    color: var(--cor-primaria);
+    transform: scale(1.1);
+}
+
+.bt-gerenciar-saldo {
+    background-color: var(--cor-borda-clara);
+    color: var(--cor-texto-principal);
+    padding: 12px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 1em;
+    font-weight: 600;
+    transition: var(--transicao-suave);
+    box-shadow: var(--sombra-botao);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 280px;
+}
+
+.bt-gerenciar-saldo:hover {
+    background-color: var(--cor-borda-foco);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* ===================== */
+/* NOVO: Ações Rápidas Area (Estilo Mercado Pago) */
+/* ===================== */
+.acoes-rapidas-area {
+    padding: 25px;
+    background: var(--cor-fundo-card);
+    border-radius: 15px;
+    box-shadow: var(--sombra-card);
+}
+
+.titulo-card-compacto {
+    font-size: 1.2em;
+    color: var(--cor-texto-principal);
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.lista-acoes-rapidas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Padrão para telas maiores/desktop */
+    gap: 15px;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.acao-rapida-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--cor-texto-principal);
+    transition: var(--transicao-suave);
+    padding: 10px 5px;
+    border-radius: 10px;
+}
+
+.acao-rapida-item:hover {
+    background-color: var(--cor-borda-clara);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.icone-acao {
+    width: 55px;
+    height: 55px;
+    background-color: var(--cor-acento);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8em;
+    color: var(--cor-texto-claro);
+    margin-bottom: 8px;
+    box-shadow: var(--sombra-botao);
+}
+
+.icone-acao i {
+    line-height: 1;
+}
+
+.texto-acao {
+    font-size: 0.9em;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+    color: var(--cor-texto-secundario);
+}
+
 
 /* ===================== */
 /* Cards */
 /* ===================== */
 .card {
-    background-color: var(--cor-card-fundo);
-    border-radius: 12px;
-    padding: 25px;
-    margin-bottom: 20px;
-    box-shadow: var(--sombra-card); /* Aplica a nova sombra */
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Adiciona transição para sombra */
+    background-color: var(--cor-fundo-card);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: var(--sombra-card);
+    transition: var(--transicao-suave);
+    display: flex;
+    flex-direction: column;
 }
 
 .card:hover {
-    transform: translateY(-5px); /* Efeito mais pronunciado no hover */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); /* Sombra mais intensa no hover */
+    transform: translateY(-5px);
+    box-shadow: var(--sombra-card-hover);
 }
 
 .titulo-card {
-    font-size: 1.1em;
-    color: var(--cor-texto-secundario);
+    font-size: 1.35em;
+    color: var(--cor-texto-principal);
     margin-top: 0;
-    margin-bottom: 15px;
-    font-weight: 600;
+    margin-bottom: 22px;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
 }
 
 .titulo-card.sub-titulo {
-    font-size: 1em;
-    margin-top: 25px;
-    margin-bottom: 15px;
+    font-size: 1.15em;
+    margin-top: 35px;
+    margin-bottom: 18px;
     color: var(--cor-primaria);
+    font-weight: 600;
 }
 
 .icone-resumo {
-    font-size: 1.3em;
-    color: var(--cor-secundaria); /* Ícones com a cor secundária */
+    font-size: 1.5em;
+    color: var(--cor-secundaria);
 }
 
-/* Areas de Resumo */
-.area-resumo-principal { /* Para Saldo em Caixa e Valor Investido */
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-/* Novo Card de Balanço Mensal */
+.area-resumo-financeiro-total,
 .area-balanco-mensal {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin: 0;
 }
 
-.card-balanco-mensal {
-    text-align: center;
-    padding: 25px;
+.card-balanco-mensal,
+.card-grafico,
+.card-formulario,
+.card-gastos-fixos,
+.card-historico,
+.card-gerenciar-gastos-fixos {
+    margin-bottom: 0;
 }
 
-.card-balanco-mensal .titulo-card {
-    justify-content: center; /* Centraliza o título */
+
+.detalhes-resumo-total,
+.detalhes-balanco {
+    margin-top: 18px;
+    margin-bottom: 25px;
 }
 
+.detalhes-resumo-total .item-resumo,
 .detalhes-balanco p {
-    margin: 8px 0;
-    font-size: 1.1em;
+    margin: 12px 0;
+    font-size: 1.2em;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 10px; /* Pequeno padding para afastar bordas */
+    padding: 0 12px;
+    border-bottom: 1px solid var(--cor-borda-clara);
+    padding-bottom: 12px;
 }
 
-.detalhes-balanco span {
+.detalhes-resumo-total .item-resumo:last-child,
+.detalhes-balanco p:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.detalhes-resumo-total .label-resumo,
+.detalhes-balanco span:first-child {
+    font-weight: 600;
+    color: var(--cor-texto-secundario);
+}
+
+.detalhes-resumo-total .valor-resumo-total,
+.detalhes-balanco span:last-child {
     font-weight: 700;
+}
+
+.detalhes-resumo-total .valor-caixa {
+    color: var(--cor-primaria);
+}
+
+.detalhes-resumo-total .valor-investimento {
+    color: var(--cor-investimento);
 }
 
 .detalhes-balanco .valor-entrada {
@@ -195,82 +441,73 @@ body {
 
 .detalhes-balanco .valor-liquido.positivo {
     color: var(--cor-sucesso);
-    font-size: 1.2em; /* Destaca o saldo líquido */
+    font-size: 1.4em;
 }
 
 .detalhes-balanco .valor-liquido.negativo {
     color: var(--cor-erro);
-    font-size: 1.2em; /* Destaca o saldo líquido */
+    font-size: 1.4em;
 }
 
 .botoes-balanco {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 18px;
+    margin-top: 30px;
+    flex-wrap: wrap;
 }
 
 .botoes-balanco .bt-ver-detalhes {
-    flex-grow: 1; /* Permite que os botões cresçam para ocupar o espaço */
-    max-width: 48%; /* Limita o tamanho em telas maiores */
-    padding: 10px 15px;
-    font-size: 0.95em;
+    flex-grow: 1;
+    max-width: calc(50% - 9px);
+    min-width: 160px;
+    padding: 14px 18px;
+    font-size: 1.05em;
+    background-color: var(--cor-borda-clara);
+    color: var(--cor-texto-principal);
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transicao-suave);
+    box-shadow: var(--sombra-botao);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
+.botoes-balanco .bt-ver-detalhes:hover {
+    background-color: var(--cor-borda-foco);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
 
-.card-resumo {
-    text-align: center;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+.bt-gerenciar-investimento {
+    margin-top: 20px;
 }
 
 .valor-resumo, .valor-principal {
-    font-size: 1.8em;
+    font-size: 2.5em;
     font-weight: 700;
-    margin: 5px 0 10px;
+    margin: 12px 0 18px;
     white-space: nowrap;
     text-align: center;
     width: 100%;
 }
 .valor-principal {
-    font-size: 2.4em;
+    font-size: 3em;
 }
-
-.card-entradas .valor-resumo { color: var(--cor-sucesso); }
-.card-gastos .valor-resumo { color: var(--cor-erro); }
-.card-saldo-caixa .valor-principal { color: var(--cor-primaria); }
-.card-investido .valor-resumo { color: var(--cor-investimento); } /* Nova cor para Investido */
-
-
-.bt-ver-detalhes {
-    display: inline-block;
-    background-color: var(--cor-btn-secundario);
-    color: var(--cor-texto-principal);
-    padding: 8px 15px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 0.9em;
-    font-weight: 500;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: var(--sombra-botao); /* Aplica sombra ao botão */
-}
-
-.bt-ver-detalhes:hover {
-    background-color: var(--cor-btn-secundario-hover);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra mais intensa no hover */
-}
-
 
 /* ===================== */
 /* Formulário */
 /* ===================== */
-.formulario-transacao, .formulario-gasto-fixo, .formulario-investimento, .formulario-login-registro {
+.formulario-transacao,
+.formulario-gasto-fixo,
+.formulario-movimentacao-investimento,
+.formulario-login-registro {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
 }
 
 .campo-do-formulario label {
@@ -278,7 +515,7 @@ body {
     margin-bottom: 8px;
     font-weight: 600;
     color: var(--cor-texto-secundario);
-    font-size: 0.95em;
+    font-size: 1em;
 }
 
 .campo-do-formulario input[type="text"],
@@ -286,107 +523,119 @@ body {
 .campo-do-formulario input[type="number"],
 .campo-do-formulario input[type="date"],
 .campo-do-formulario select {
-    width: calc(100% - 24px);
-    padding: 12px;
+    width: 100%;
+    padding: 16px;
     border: 1px solid var(--cor-borda-clara);
-    border-radius: 8px; /* Borda arredondada */
-    font-size: 1em;
-    box-sizing: border-box;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease; /* Adiciona transição para foco */
+    border-radius: 12px;
+    font-size: 1.05em;
+    color: var(--cor-texto-principal);
+    background-color: var(--cor-fundo-card);
+    transition: var(--transicao-suave);
+}
+
+.campo-do-formulario input::placeholder {
+    color: #A0A0A0;
+    opacity: 0.7;
 }
 
 .campo-do-formulario input:focus,
 .campo-do-formulario select:focus {
     border-color: var(--cor-primaria);
     outline: none;
-    box-shadow: var(--sombra-foco); /* Sombra de foco mais sutil */
+    box-shadow: var(--sombra-foco);
 }
 
-/* Estilo para Radio Buttons */
 .tipo-transacao-grupo {
-    margin-top: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--cor-borda-clara);
 }
 
 .opcoes-tipo {
     display: flex;
-    gap: 20px;
-    margin-top: 5px;
+    gap: 30px;
+    margin-top: 12px;
 }
 
 .radio-label {
     display: flex;
     align-items: center;
     cursor: pointer;
-    font-weight: normal;
+    font-weight: 500;
     color: var(--cor-texto-principal);
+    font-size: 1.05em;
 }
 
 .radio-label input[type="radio"] {
-    margin-right: 8px;
-    accent-color: var(--cor-primaria); /* Cor do rádio button */
+    margin-right: 12px;
+    transform: scale(1.2);
+    accent-color: var(--cor-primaria);
 }
 
 .bt-acao {
-    padding: 12px 20px;
+    padding: 16px 30px;
     border: none;
-    border-radius: 8px;
-    font-size: 1.1em;
-    font-weight: 600;
+    border-radius: 12px;
+    font-size: 1.2em;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    transition: var(--transicao-suave);
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     text-decoration: none;
-    box-shadow: var(--sombra-botao); /* Sombra para botões de ação */
+    box-shadow: var(--sombra-botao);
+    color: var(--cor-texto-claro);
+}
+
+.bt-acao i {
+    font-size: 1.2em;
 }
 
 .bt-acao:active {
-    transform: translateY(2px); /* Efeito de 'clique' mais evidente */
-    box-shadow: none; /* Remove sombra ao clicar */
+    transform: translateY(2px);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
-.bt-adicionar, .bt-adicionar-gasto-fixo, .bt-atualizar-investimento, .bt-login-registro {
+.bt-adicionar,
+.bt-adicionar-gasto-fixo,
+.bt-login-registro {
     background-color: var(--cor-primaria);
-    color: white;
 }
 
-.bt-adicionar:hover, .bt-adicionar-gasto-fixo:hover, .bt-atualizar-investimento:hover, .bt-login-registro:hover {
+.bt-adicionar:hover,
+.bt-adicionar-gasto-fixo:hover {
     background-color: var(--cor-secundaria);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Sombra mais intensa no hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .bt-voltar {
-    background-color: var(--cor-btn-secundario);
+    background-color: var(--cor-borda-clara);
     color: var(--cor-texto-principal);
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
+    margin-top: 30px;
     box-shadow: var(--sombra-botao);
 }
 
 .bt-voltar:hover {
-    background-color: var(--cor-btn-secundario-hover);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: var(--cor-borda-foco);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 
 /* ===================== */
 /* Gráfico Circular */
 /* ===================== */
-.card-grafico {
+.card-grafico, .card-grafico-mensal {
     text-align: center;
-    padding-bottom: 10px;
+    padding-bottom: 20px;
 }
 
 .area-do-canvas {
-    max-width: 250px;
-    max-height: 250px;
-    margin: 20px auto 15px;
+    max-width: 300px;
+    max-height: 300px;
+    margin: 30px auto 25px;
     position: relative;
 }
 
@@ -394,9 +643,9 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 25px;
-    font-size: 0.95em;
-    margin-top: 10px;
+    gap: 35px;
+    font-size: 1em;
+    margin-top: 20px;
     font-weight: 600;
 }
 
@@ -404,124 +653,149 @@ body {
     margin: 0;
     display: flex;
     align-items: center;
+    color: var(--cor-texto-principal);
 }
 
 .cor-legenda {
     display: inline-block;
-    width: 15px;
-    height: 15px;
-    border-radius: 3px;
-    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    margin-right: 10px;
 }
 
+.cor-legenda.caixa { background-color: var(--cor-grafico-caixa); }
+.cor-legenda.investimento { background-color: var(--cor-grafico-investimento); }
 .cor-legenda.entrada { background-color: var(--cor-grafico-entrada); }
 .cor-legenda.gasto { background-color: var(--cor-grafico-gasto); }
-.cor-legenda.investimento { background-color: var(--cor-grafico-investimento); }
 
+
+.mensagem-vazia {
+    text-align: center;
+    color: var(--cor-texto-secundario);
+    font-style: italic;
+    padding: 30px;
+    background-color: #F0F2F5;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    margin-top: 25px;
+    font-size: 1.05em;
+}
 
 /* ===================== */
 /* Lista de Transações */
 /* ===================== */
-.lista-de-transacoes {
+.lista-de-transacoes,
+.lista-gastos-fixos,
+.lista-detalhes-relatorio {
     list-style: none;
     padding: 0;
-    margin-top: 15px;
+    margin-top: 25px;
 }
 
-.item-transacao {
+.item-transacao,
+.item-gasto-fixo,
+.item-relatorio-detalhado {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 15px 0;
+    justify-content: flex-start;
+    padding: 18px 0;
     border-bottom: 1px solid var(--cor-borda-clara);
 }
 
-.item-transacao:last-child {
+.item-transacao:last-child,
+.item-gasto-fixo:last-child,
+.item-relatorio-detalhado:last-child {
     border-bottom: none;
 }
 
-.detalhes-transacao {
+.detalhes-transacao,
+.detalhes-gasto-fixo,
+.info-transacao-relatorio {
     flex-grow: 1;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    white-space: normal;
 }
 
-.descricao-transacao {
+.descricao-transacao,
+.descricao-gasto-fixo,
+.descricao-relatorio {
     display: block;
     font-weight: 600;
-    font-size: 1.05em;
-    margin-bottom: 3px;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    color: var(--cor-texto-principal);
+    width: 100%;
 }
 
-.categoria-transacao {
+.categoria-transacao,
+.meta-relatorio {
     display: block;
-    font-size: 0.85em;
+    font-size: 0.9em;
     color: var(--cor-texto-secundario);
+    width: 100%;
 }
 
 .data-transacao {
     font-weight: normal;
-    font-size: 0.9em;
-    color: #888;
+    font-size: 0.88em;
+    color: #777;
+    margin-left: 0;
+    margin-top: 2px;
 }
 
-.valor-transacao {
+.valor-transacao,
+.valor-programado,
+.valor-relatorio {
     font-weight: 700;
-    font-size: 1.1em;
-    margin-left: 15px;
+    font-size: 1.2em;
+    margin-left: auto;
     white-space: nowrap;
+    text-align: right;
+    flex-shrink: 0;
+    order: 2;
 }
 
-.item-transacao.entrada .valor-transacao {
-    color: var(--cor-sucesso);
-}
-
-.item-transacao.gasto .valor-transacao {
-    color: var(--cor-erro);
-}
-
-.formulario-excluir {
+.item-transacao .formulario-excluir,
+.item-gasto-fixo .formulario-excluir {
     margin-left: 10px;
     flex-shrink: 0;
+    order: 3;
 }
 
 .bt-excluir {
     background-color: transparent;
     color: var(--cor-texto-secundario);
     border: none;
-    font-size: 1.2em;
+    font-size: 1.4em;
     cursor: pointer;
-    opacity: 0.7; /* Suaviza a opacidade */
-    transition: opacity 0.2s ease, color 0.2s ease;
-    padding: 5px;
+    opacity: 0.7;
+    transition: var(--transicao-suave);
+    padding: 10px;
     border-radius: 50%;
 }
 
 .bt-excluir:hover {
     opacity: 1;
     color: var(--cor-erro);
-    background-color: #ffebeb;
-}
-
-.mensagem-vazia {
-    text-align: center;
-    color: var(--cor-texto-secundario);
-    font-style: italic;
-    padding: 20px;
-    background-color: #f8f8f8;
-    border-radius: 8px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05); /* Sombra sutil */
+    background-color: rgba(220, 53, 69, 0.1);
+    transform: scale(1.15);
 }
 
 .ver-todas-transacoes {
     text-align: center;
-    margin-top: 20px;
-    font-size: 0.9em;
+    margin-top: 30px;
+    font-size: 1em;
 }
 
 .ver-todas-transacoes a {
     color: var(--cor-primaria);
     text-decoration: none;
     font-weight: 600;
-    transition: color 0.2s ease;
+    transition: var(--transicao-suave);
 }
 
 .ver-todas-transacoes a:hover {
@@ -533,40 +807,43 @@ body {
 /* Seção de Mensagens Flash */
 /* ===================== */
 .area-de-mensagens {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     position: sticky;
-    top: 0;
+    top: 25px;
     z-index: 100;
     text-align: center;
 }
 
 .mensagem {
-    padding: 12px 20px;
-    margin: 0 auto 10px;
-    border-radius: 8px;
+    padding: 18px 30px;
+    margin: 0 auto 18px;
+    border-radius: 12px;
     font-weight: 600;
     width: fit-content;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-width: 95%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     animation: fadeOut 5s forwards;
-    display: inline-block; /* Para centralizar com width:fit-content */
+    display: inline-block;
+    line-height: 1.4;
+    font-size: 1.05em;
 }
 
 .mensagem.sucesso {
-    background-color: #e6ffed;
-    color: #1a6d2f;
-    border: 1px solid #b3e7c8;
+    background-color: #D4EDDA;
+    color: #155724;
+    border: 1px solid #C3E6CB;
 }
 
 .mensagem.erro {
-    background-color: #ffe6e8;
-    color: #8c2e36;
-    border: 1px solid #e7b3bb;
+    background-color: #F8D7DA;
+    color: #721C24;
+    border: 1px solid #F5C6CB;
 }
 
 .mensagem.info {
-    background-color: #e0f2f7;
-    color: #0056b3;
-    border: 1px solid #a3daeb;
+    background-color: #D1ECF1;
+    color: #0C5460;
+    border: 1px solid #BEE5EB;
 }
 
 @keyframes fadeOut {
@@ -578,48 +855,11 @@ body {
 /* ===================== */
 /* Estilos para Gastos Fixos */
 /* ===================== */
-.lista-gastos-fixos {
-    list-style: none;
-    padding: 0;
-    margin-top: 15px;
-}
-
-.item-gasto-fixo {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 0;
-    border-bottom: 1px solid var(--cor-borda-clara);
-}
-
-.item-gasto-fixo:last-child {
-    border-bottom: none;
-}
-
-.detalhes-gasto-fixo {
-    flex-grow: 1;
-    margin-right: 10px;
-}
-
-.descricao-gasto-fixo {
-    display: block;
-    font-weight: 600;
-    font-size: 1.05em;
-    margin-bottom: 3px;
-}
-
-.categoria-gasto-fixo {
-    display: block;
-    font-size: 0.85em;
-    color: var(--cor-texto-secundario);
-}
-
 .valores-gasto-fixo {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    margin-left: 10px;
+    margin-left: 18px;
     white-space: nowrap;
 }
 
@@ -629,39 +869,35 @@ body {
 }
 
 .valor-aproximado {
-    font-size: 0.85em;
+    font-size: 0.9em;
     color: #888;
-    margin-top: 2px;
-}
-
-.bt-adicionar-gasto-fixo {
-    margin-top: 15px;
+    margin-top: 5px;
 }
 
 .card-gerenciar-gastos-fixos {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--cor-card-fundo);
-    padding: 15px 25px;
-    border-radius: 12px;
-    box-shadow: var(--sombra-card); /* Sombra no card do botão */
-    margin-bottom: 20px;
+    background-color: var(--cor-fundo-card);
+    padding: 20px 25px;
+    border-radius: 15px;
+    box-shadow: var(--sombra-card);
+    margin-bottom: 25px;
 }
 
 .bt-toggle-gastos-fixos {
     background-color: var(--cor-primaria);
-    color: white;
+    color: var(--cor-texto-claro);
     width: auto;
-    padding: 12px 25px;
-    font-size: 1.1em;
-    border-radius: 8px;
-    box-shadow: var(--sombra-botao); /* Sombra para este botão também */
+    padding: 16px 35px;
+    font-size: 1.15em;
+    border-radius: 10px;
+    box-shadow: var(--sombra-botao);
 }
 
 .bt-toggle-gastos-fixos:hover {
     background-color: var(--cor-secundaria);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* ===================== */
@@ -671,83 +907,61 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 18px;
+    margin-bottom: 30px;
 }
 
 .controles-relatorio .titulo-card {
     width: 100%;
     justify-content: center;
-    margin-bottom: 5px;
+    margin-bottom: 12px;
 }
 
 .bt-filtro-relatorio {
     flex-grow: 1;
-    max-width: 48%;
-    background-color: var(--cor-btn-secundario);
+    max-width: calc(50% - 9px);
+    min-width: 150px;
+    background-color: var(--cor-borda-clara);
     color: var(--cor-texto-principal);
     border: 1px solid var(--cor-borda-clara);
-    box-shadow: var(--sombra-botao); /* Sombra para estes botões */
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: var(--sombra-botao);
+    transition: var(--transicao-suave);
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .bt-filtro-relatorio.ativo {
     background-color: var(--cor-primaria);
-    color: white;
+    color: var(--cor-texto-claro);
     border-color: var(--cor-primaria);
-    box-shadow: 0 2px 5px rgba(108, 92, 231, 0.25); /* Sombra sutil para ativo */
+    box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+    transform: translateY(-2px);
 }
 
 .bt-filtro-relatorio:not(.ativo):hover {
-    background-color: var(--cor-btn-secundario-hover);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: var(--cor-borda-foco);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-3px);
 }
 
 .subtitulo-secao {
-    font-size: 1.2em;
+    font-size: 1.4em;
     color: var(--cor-primaria);
     text-align: center;
-    margin-top: 20px;
-    margin-bottom: 15px;
+    margin-top: 35px;
+    margin-bottom: 25px;
     font-weight: 700;
-}
-
-.lista-detalhes-relatorio {
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
-}
-
-.item-relatorio-detalhado {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--cor-borda-clara);
-}
-.item-relatorio-detalhado:last-child {
-    border-bottom: none;
-}
-
-.info-transacao-relatorio {
-    flex-grow: 1;
-    margin-right: 10px;
-}
-.descricao-relatorio {
-    font-weight: 600;
-    color: var(--cor-texto-principal);
-    display: block;
-}
-.meta-relatorio {
-    font-size: 0.9em;
-    color: var(--cor-texto-secundario);
-    display: block;
 }
 
 .valor-relatorio {
-    font-weight: 700;
     color: var(--cor-primaria);
-    white-space: nowrap;
 }
 .item-relatorio-detalhado.entrada .valor-relatorio {
     color: var(--cor-sucesso);
@@ -755,41 +969,47 @@ body {
 .item-relatorio-detalhado.gasto .valor-relatorio {
     color: var(--cor-erro);
 }
+/* Estilos para Transações de Investimento no histórico*/
+.item-transacao.investimento .valor-transacao,
+.item-relatorio-detalhado.investimento .valor-relatorio {
+    color: var(--cor-investimento);
+    font-weight: 700;
+}
 
 /* Investimentos page specific styles */
 .card-investimento-atual {
     text-align: center;
-    padding: 30px;
-}
-.formulario-investimento {
-    margin-top: 20px;
+    padding: 40px;
 }
 
-/* Grupo de botões para movimentação (aporte/resgate) */
+.formulario-movimentacao-investimento {
+    margin-top: 30px;
+}
+
 .grupo-botoes-movimento {
     display: flex;
-    gap: 15px;
-    margin-top: 15px;
+    gap: 18px;
+    margin-top: 25px;
+    flex-wrap: wrap;
 }
 
 .grupo-botoes-movimento .bt-acao {
     flex: 1;
+    min-width: 140px;
 }
 
 .bt-aportar {
-    color:#fff;
     background-color: var(--cor-sucesso);
 }
 .bt-aportar:hover {
-    background-color: #218838;
+    background-color: var(--cor-sucesso-hover);
 }
 
 .bt-resgatar {
-    color:#fff;
     background-color: var(--cor-erro);
 }
 .bt-resgatar:hover {
-    background-color: #c82333;
+    background-color: var(--cor-erro-hover);
 }
 
 
@@ -797,38 +1017,108 @@ body {
 /* Estilos para Páginas de Login/Registro */
 /* ===================== */
 .card-login-registro {
-    max-width: 400px;
-    margin: 50px auto;
+    max-width: 480px;
+    margin: 70px auto;
     text-align: center;
+    padding: 40px;
 }
 
 .card-login-registro .titulo-card {
     justify-content: center;
+    font-size: 1.6em;
+    margin-bottom: 30px;
+}
+.card-login-registro .titulo-card i {
+    font-size: 1.3em;
 }
 
 .card-login-registro p {
-    font-size: 0.9em;
-    margin-top: 15px;
+    font-size: 1em;
+    margin-top: 30px;
+    color: var(--cor-texto-secundario);
 }
 
 .card-login-registro a {
     color: var(--cor-primaria);
     text-decoration: none;
     font-weight: 600;
+    transition: var(--transicao-suave);
 }
 
 .card-login-registro a:hover {
+    color: var(--cor-secundaria);
     text-decoration: underline;
 }
+
+/* FAB (removido da home para focar nas ações rápidas diretas) */
+.fab-container {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 100;
+    display: none;
+}
+
+.fab-main {
+    background-color: var(--cor-primaria);
+    color: white;
+    border: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 1.8em;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: var(--transicao-suave);
+}
+
+.fab-main:hover {
+    background-color: var(--cor-secundaria);
+    transform: scale(1.05);
+}
+
+.fab-actions {
+    display: none;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-bottom: 10px;
+}
+
+.fab-container:hover .fab-actions {
+    display: flex;
+}
+
+.fab-action {
+    background-color: var(--cor-fundo-card);
+    color: var(--cor-texto-principal);
+    text-decoration: none;
+    padding: 12px 18px;
+    margin: 5px 0;
+    border-radius: 8px;
+    box-shadow: var(--sombra-card);
+    font-weight: 600;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: var(--transicao-suave);
+}
+
+.fab-action:hover {
+    background-color: var(--cor-borda-clara);
+    transform: translateY(-2px);
+}
+
+
 
 /* ===================== */
 /* Responsividade */
 /* ===================== */
 @media (max-width: 768px) {
     .header-app {
-        padding: 30px 15px 60px;
-        border-bottom-left-radius: 30px;
-        border-bottom-right-radius: 30px;
+        padding: 20px 15px 20px;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
     }
     .titulo-app {
         font-size: 1.8em;
@@ -838,202 +1128,392 @@ body {
     }
     .area-usuario-nav {
         position: static;
-        margin-top: 15px;
+        margin-top: 10px;
         justify-content: center;
         width: 100%;
-    }
-    .container {
-        padding: 15px;
-    }
-    .card {
-        padding: 20px;
-    }
-    .area-resumo-principal, .area-visao-geral-mensal {
-        grid-template-columns: 1fr;
-    }
-    .valor-principal, .valor-resumo {
-        font-size: 2em;
-    }
-    .bt-acao {
-        padding: 12px 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 1.1em;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.1s ease;
-        width: 100%;
-        display: flex;
-        justify-content: center; /* <-- Garanta que esta linha esteja presente e seja efetiva */
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-        text-align: center; /* Adicione isso para garantir centralização de texto em caso de fallback */
-    }
-    .bt-acao i {
-    /* Se o ícone estiver desalinhado, pode precisar de ajuste fino */
-        margin-right: 5px; /* Pequeno espaçamento entre ícone e texto */
-    }
-    .campo-do-formulario input,
-    .campo-do-formulario input[type="password"],
-    .campo-do-formulario select {
-        padding: 10px;
-        font-size: 0.95em;
-    }
-    .item-transacao {
-        flex-wrap: wrap;
-        padding: 12px 0;
-    }
-    .detalhes-transacao {
-        width: calc(100% - 50px);
-        margin-bottom: 5px;
-    }
-    .valor-transacao {
-        margin-left: 0;
-        width: 100%;
-        text-align: right;
-        order: 1;
-    }
-    .formulario-excluir {
-        order: 2;
-        margin-left: auto;
-    }
-    .controles-relatorio .titulo-card {
-        margin-bottom: 5px;
-    }
-    .bt-filtro-relatorio {
-        max-width: 100%;
-    }
-    .item-gasto-fixo {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .valores-gasto-fixo {
-        width: 100%;
-        align-items: flex-start;
-        margin-left: 0;
-        margin-top: 8px;
-    }
-    .formulario-gasto-fixo .campo-do-formulario input,
-    .formulario-gasto-fixo .campo-do-formulario select {
-        width: 100%;
-    }
-    .grupo-botoes-movimento {
-        flex-direction: column;
+        padding: 0 10px;
+        flex-direction: row;
         gap: 10px;
     }
-    /* Ajustes para os botões do Balanço do Mês no mobile */
-    .botoes-balanco {
-        flex-direction: row; /* Mantém os botões em linha */
-        flex-wrap: wrap; /* Permite quebrar linha se não houver espaço */
-        justify-content: center;
-        gap: 8px; /* Espaçamento reduzido */
+    .nome-usuario-logado {
+        padding: 6px 12px;
+        margin-bottom: 0;
     }
-    .botoes-balanco .bt-ver-detalhes {
-        flex-grow: 1;
-        max-width: calc(50% - 4px); /* Tenta manter dois por linha */
-        min-width: 130px; /* Garante tamanho mínimo */
+    .bt-nav-usuario {
+        padding: 6px 12px;
+        font-size: 0.9em;
+        width: auto;
     }
-}
-
-/* ===================== */
-/* Novo Card de Resumo Financeiro Total (Saldo e Investido) */
-/* ===================== */
-.area-resumo-financeiro-total {
-    margin-bottom: 20px;
-}
-
-.card-resumo-total {
-    text-align: center; /* Centraliza o título */
-    padding: 25px;
-}
-
-.card-resumo-total .titulo-card {
-    justify-content: center; /* Centraliza o título com ícone */
-}
-
-.detalhes-resumo-total {
-    margin-top: 15px;
-    margin-bottom: 20px;
-}
-
-.detalhes-resumo-total .item-resumo {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 10px;
-    font-size: 1.15em;
-    border-bottom: 1px solid var(--cor-borda-clara); /* Linha divisória */
-}
-
-.detalhes-resumo-total .item-resumo:last-child {
-    border-bottom: none; /* Remove a linha do último item */
-}
-
-.detalhes-resumo-total .label-resumo {
-    font-weight: 600;
-    color: var(--cor-texto-secundario);
-}
-
-.detalhes-resumo-total .valor-resumo-total {
-    font-weight: 700;
-}
-
-.detalhes-resumo-total .valor-caixa {
-    color: var(--cor-primaria); /* Cor do saldo em caixa */
-}
-
-.detalhes-resumo-total .valor-investimento {
-    color: var(--cor-investimento); /* Cor do valor investido */
-}
-
-.bt-gerenciar-investimento {
-    margin-top: 10px; /* Espaçamento do botão para cima */
-}
-
-
-/* Remova ou ajuste as classes antigas se não forem mais usadas: */
-/* .area-resumo-principal {} */
-/* .card-saldo-caixa {} */
-/* .card-investido {} */
-
-/* E ajuste a responsividade para o novo card, se necessário: */
-@media (max-width: 768px) {
-    /* ... outros estilos ... */
-
-    /* Ajuste para os botões do Balanço do Mês */
-    .botoes-balanco {
-        flex-direction: row; /* Mantém os botões lado a lado */
-        flex-wrap: wrap; /* Permite que os botões quebrem para a próxima linha se não houver espaço suficiente */
-        justify-content: center; /* Centraliza os botões horizontalmente */
-        gap: 10px; /* Espaçamento entre os botões */
+    .area-usuario-nav a {
+        margin: 0 5px;
     }
 
-    .botoes-balanco .bt-ver-detalhes {
-        flex-grow: 1; /* Permite que os botões cresçam para preencher o espaço disponível */
-        max-width: calc(50% - 5px); /* Tenta manter dois por linha, ajustando para o gap */
-        min-width: 140px; /* Garante um tamanho mínimo para não ficarem muito pequenos */
-        padding: 12px 10px; /* Ajusta o padding para caber melhor */
-        font-size: 0.9em; /* Reduz um pouco o tamanho da fonte */
+    .container {
+        max-width: 95%; /* Container ocupa 95% da largura da tela */
+        padding: 20px;
+        margin: 0 auto;
+        gap: 20px;
+    }
+    .card {
+        padding: 25px;
+        border-radius: 12px;
+    }
+    .titulo-card {
+        font-size: 1.2em;
+        margin-bottom: 18px;
+    }
+    .titulo-card.sub-titulo {
+        font-size: 1.05em;
+        margin-top: 25px;
+        margin-bottom: 12px;
+    }
+    .icone-resumo {
+        font-size: 1.3em;
     }
 
-    /* ... outros estilos ... */
-}
-@media (max-width: 480px) {
-    .header-app {
-        border-bottom-left-radius: 20px;
-        border-bottom-right-radius: 20px;
+    .saldo-principal-area {
+        padding: 25px;
+        gap: 15px;
     }
-    .titulo-app {
+    .valor-saldo {
+        font-size: 2.5em;
+    }
+    .bt-gerenciar-saldo {
+        padding: 10px 15px;
+        font-size: 0.95em;
+        max-width: 250px;
+    }
+
+    .acoes-rapidas-area {
+        padding: 20px;
+    }
+    .titulo-card-compacto {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+    }
+    .lista-acoes-rapidas {
+        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+        gap: 10px;
+    }
+    .icone-acao {
+        width: 50px;
+        height: 50px;
         font-size: 1.6em;
     }
-    .valor-principal {
-        font-size: 2em;
+    .texto-acao {
+        font-size: 0.85em;
     }
-    .item-transacao {
+
+
+    .detalhes-balanco p {
+        font-size: 1.1em;
+        margin: 10px 0;
+        padding-bottom: 10px;
+    }
+    .detalhes-balanco .valor-liquido {
+        font-size: 1.25em;
+    }
+
+    .botoes-balanco {
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .botoes-balanco .bt-ver-detalhes {
+        max-width: calc(50% - 6px);
+        min-width: unset;
+        padding: 12px 15px;
         font-size: 0.95em;
     }
+
+
+    .campo-do-formulario input,
+    .campo-do-formulario select {
+        padding: 14px;
+        font-size: 0.98em;
+        border-radius: 10px;
+    }
+    .opcoes-tipo {
+        gap: 20px;
+    }
+    .radio-label {
+        font-size: 1em;
+    }
+    .radio-label input[type="radio"] {
+        transform: scale(1.1);
+    }
+
+    .bt-acao {
+        padding: 14px 25px;
+        font-size: 1.1em;
+        gap: 10px;
+        border-radius: 10px;
+    }
+    .bt-acao i {
+        font-size: 1.1em;
+    }
+
+    .area-do-canvas {
+        max-width: 250px;
+        max-height: 250px;
+        margin: 25px auto 20px;
+    }
+    .legenda-grafico {
+        gap: 25px;
+        font-size: 0.95em;
+    }
+    .cor-legenda {
+        width: 18px;
+        height: 18px;
+    }
+
+    .item-transacao,
+    .item-gasto-fixo,
+    .item-relatorio-detalhado {
+        flex-wrap: nowrap;
+        padding: 15px 0;
+    }
+    .detalhes-transacao,
+    .detalhes-gasto-fixo,
+    .info-transacao-relatorio {
+        margin-right: 15px;
+        margin-bottom: 0;
+    }
+    .descricao-transacao,
+    .descricao-gasto-fixo,
+    .descricao-relatorio {
+        font-size: 1.05em;
+    }
+    .categoria-transacao,
+    .meta-relatorio {
+        font-size: 0.85em;
+    }
+    .data-transacao {
+        font-size: 0.82em;
+    }
+
+    .valor-transacao,
+    .valor-programado,
+    .valor-relatorio {
+        margin-left: auto;
+        width: auto;
+        order: 2;
+        font-size: 1.1em;
+    }
+    .formulario-excluir {
+        order: 3;
+        margin-left: 10px;
+    }
+    .valores-gasto-fixo {
+        width: auto;
+        align-items: flex-end;
+        margin-left: 15px;
+        margin-top: 0;
+    }
+
+    .mensagem {
+        padding: 15px 20px;
+        font-size: 0.95em;
+        margin: 0 auto 15px;
+    }
+
+    .card-login-registro {
+        margin: 50px auto;
+        padding: 30px;
+    }
+    .card-login-registro .titulo-card {
+        font-size: 1.4em;
+        margin-bottom: 25px;
+    }
+    .card-login-registro .titulo-card i {
+        font-size: 1.2em;
+    }
+    .card-login-registro p {
+        font-size: 0.95em;
+        margin-top: 25px;
+    }
+    .grupo-botoes-movimento .bt-acao {
+        padding: 12px;
+        font-size: 1.05em;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-app {
+        padding: 15px 10px 15px;
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+    }
+    .titulo-app {
+        font-size: 1.8em;
+    }
+    .subtitulo-app {
+        font-size: 0.85em;
+    }
+    .area-usuario-nav {
+        flex-direction: row;
+        gap: 8px;
+        top: 8px;
+        right: 8px;
+    }
+    .nome-usuario-logado {
+        padding: 5px 8px;
+        font-size: 0.8em;
+    }
+    .bt-nav-usuario {
+        font-size: 0.8em;
+        padding: 5px 8px;
+        width: auto;
+    }
+    .area-usuario-nav a {
+        margin: 0;
+    }
+
+    .container {
+        max-width: 95%;
+        padding: 15px;
+        margin: 0 auto;
+        gap: 15px;
+    }
+    .card {
+        padding: 18px;
+        border-radius: 10px;
+    }
+    .titulo-card {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+    }
+    .icone-resumo {
+        font-size: 1.2em;
+    }
+
+    .saldo-principal-area {
+        padding: 20px 15px;
+        gap: 10px;
+    }
+    .valor-saldo {
+        font-size: 2.2em;
+    }
+    .bt-toggle-saldo {
+        font-size: 1em;
+        margin-top: 5px;
+    }
+    .bt-gerenciar-saldo {
+        padding: 10px 12px;
+        font-size: 0.85em;
+    }
+
+    .acoes-rapidas-area {
+        padding: 15px;
+    }
+    .titulo-card-compacto {
+        font-size: 1em;
+        margin-bottom: 12px;
+    }
+    .lista-acoes-rapidas {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    .icone-acao {
+        width: 60px;
+        height: 60px;
+        font-size: 2em;
+        margin-bottom: 8px;
+    }
+    .texto-acao {
+        font-size: 0.85em;
+    }
+
+    .detalhes-balanco p {
+        font-size: 0.95em;
+        margin: 6px 0;
+        padding-bottom: 6px;
+    }
+    .detalhes-balanco .valor-liquido {
+        font-size: 1.1em;
+    }
+
+    .botoes-balanco {
+        flex-direction: row;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .botoes-balanco .bt-ver-detalhes {
+        max-width: calc(50% - 4px);
+        font-size: 0.85em;
+        padding: 10px 8px;
+    }
+
+    .campo-do-formulario input,
+    .campo-do-formulario select {
+        padding: 12px;
+        font-size: 0.9em;
+    }
+    .opcoes-tipo {
+        gap: 15px;
+    }
+    .radio-label {
+        font-size: 0.9em;
+    }
+
+    .bt-acao {
+        padding: 12px 20px;
+        font-size: 1em;
+    }
+    .bt-acao i {
+        font-size: 1em;
+    }
+
+    .area-do-canvas {
+        max-width: 180px;
+        max-height: 180px;
+    }
+    .legenda-grafico {
+        gap: 15px;
+        font-size: 0.85em;
+    }
+    .cor-legenda {
+        width: 16px;
+        height: 16px;
+    }
+
+    .item-transacao,
+    .item-gasto-fixo,
+    .item-relatorio-detalhado {
+        padding: 12px 0;
+    }
+    .descricao-transacao,
+    .descricao-gasto-fixo,
+    .descricao-relatorio {
+        font-size: 0.95em;
+    }
+    .valor-transacao,
+    .valor-programado,
+    .valor-relatorio {
+        font-size: 1em;
+    }
     .bt-excluir {
+        font-size: 1.2em;
+        padding: 8px;
+    }
+
+    .mensagem {
+        padding: 10px 15px;
+        font-size: 0.88em;
+    }
+
+    .card-login-registro {
+        margin: 30px auto;
+        padding: 25px;
+    }
+    .card-login-registro .titulo-card {
+        font-size: 1.3em;
+    }
+    .card-login-registro p {
+        font-size: 0.9em;
+    }
+    .grupo-botoes-movimento .bt-acao {
+        padding: 10px;
         font-size: 1em;
     }
 }

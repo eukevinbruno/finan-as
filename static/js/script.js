@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // =====================
     btGerenciarGastosFixos.addEventListener('click', function() {
         if (secaoGastosFixos.style.display === 'none' || secaoGastosFixos.style.display === '') {
-            secaoGastosFixos.style.display = 'block';
+            secaoGastosFixos.style.display = 'flex'; // Usar flex para melhor layout interno
             btGerenciarGastosFixos.innerHTML = '<i class="fas fa-times-circle"></i> Fechar Gastos Fixos';
         } else {
             secaoGastosFixos.style.display = 'none';
@@ -141,63 +141,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // =====================
-    // Gráfico Circular de Panorama Financeiro Total (Gastos, Entradas, Investimentos)
+    // Gráfico 1: Panorama Geral de Fundos (Saldo em Caixa, Valor Investido)
     // =====================
-    const ctx = document.getElementById('graficoCircular').getContext('2d');
-    
-    // Os dados já vêm diretamente do Flask e são específicos do usuário logado
-    // totalEntradasMensal, totalGastosMensal, valorInvestidoTotal são variáveis globais do HTML
+    const ctxFundoGeral = document.getElementById('graficoCircular').getContext('2d');
 
-    const totalParaGrafico = totalEntradasMensal + totalGastosMensal + valorInvestidoTotal;
+    const totalParaGraficoDeSaldos = saldoCaixaTotal + valorInvestidoTotal;
 
-    let percentualEntradas = 0;
-    let percentualGastos = 0;
-    let percentualInvestido = 0;
-
-    const corEntrada = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-entrada').trim();
-    const corGasto = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-gasto').trim();
+    const corCaixa = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-caixa').trim();
     const corInvestimento = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-investimento').trim();
 
+    const dataGraficoFundoGeral = [];
+    const coresGraficoFundoGeral = [];
+    const labelsGraficoFundoGeral = [];
 
-    if (totalParaGrafico > 0) {
-        percentualEntradas = (totalEntradasMensal / totalParaGrafico) * 100;
-        percentualGastos = (totalGastosMensal / totalParaGrafico) * 100;
-        percentualInvestido = (valorInvestidoTotal / totalParaGrafico) * 100;
+    if (totalParaGraficoDeSaldos > 0) {
+        if (saldoCaixaTotal > 0) {
+            dataGraficoFundoGeral.push((saldoCaixaTotal / totalParaGraficoDeSaldos) * 100);
+            coresGraficoFundoGeral.push(corCaixa);
+            labelsGraficoFundoGeral.push('Saldo em Caixa');
+        }
+        if (valorInvestidoTotal > 0) {
+            dataGraficoFundoGeral.push((valorInvestidoTotal / totalParaGraficoDeSaldos) * 100);
+            coresGraficoFundoGeral.push(corInvestimento);
+            labelsGraficoFundoGeral.push('Valor Investido');
+        }
     }
 
-    const dataGrafico = [];
-    const coresGrafico = [];
-    const labelsGrafico = [];
-
-    // Adiciona os dados ao gráfico apenas se o percentual for maior que 0
-    // Ordem: Gastos, Entradas, Investimentos (como você mencionou a ordem dos totais)
-    if (percentualGastos > 0) {
-        dataGrafico.push(percentualGastos);
-        coresGrafico.push(corGasto);
-        labelsGrafico.push('Gastos');
-    }
-    if (percentualEntradas > 0) {
-        dataGrafico.push(percentualEntradas);
-        coresGrafico.push(corEntrada);
-        labelsGrafico.push('Entradas');
-    }
-    if (percentualInvestido > 0) {
-        dataGrafico.push(percentualInvestido);
-        coresGrafico.push(corInvestimento);
-        labelsGrafico.push('Investimentos');
-    }
-
-    if (dataGrafico.length === 0) {
-        // Se não houver dados, exibe uma mensagem
-        ctx.canvas.parentNode.innerHTML = '<p class="mensagem-vazia">Nenhum dado para o panorama financeiro.</p>';
+    if (dataGraficoFundoGeral.length === 0) {
+        ctxFundoGeral.canvas.parentNode.innerHTML = '<p class="mensagem-vazia">Nenhum dado disponível para o panorama de fundos.</p>';
     } else {
-        new Chart(ctx, {
+        new Chart(ctxFundoGeral, {
             type: 'doughnut',
             data: {
-                labels: labelsGrafico,
+                labels: labelsGraficoFundoGeral,
                 datasets: [{
-                    data: dataGrafico,
-                    backgroundColor: coresGrafico,
+                    data: dataGraficoFundoGeral,
+                    backgroundColor: coresGraficoFundoGeral,
                     hoverOffset: 10,
                     borderWidth: 0
                 }]
@@ -207,16 +186,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 maintainAspectRatio: false,
                 cutout: '70%',
                 plugins: {
-                    legend: {
-                        display: false
-                    },
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
                                 let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
+                                if (label) { label += ': '; }
                                 return label + context.raw.toFixed(2) + '%';
                             }
                         }
@@ -224,5 +199,69 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    }
+
+    // =====================
+    // Gráfico 2: Balanço Gráfico do Mês (Entradas, Gastos)
+    // =====================
+    const ctxBalançoMensal = document.getElementById('graficoCircularMensal'); // Novo ID
+    if (ctxBalançoMensal) { // Verifica se o elemento existe (para evitar erro em outras páginas)
+        const ctxMensal = ctxBalançoMensal.getContext('2d');
+
+        const totalParaGraficoMensal = totalEntradasMensal + totalGastosMensal;
+
+        const corEntradaGrafico = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-entrada').trim();
+        const corGastoGrafico = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-gasto').trim();
+
+        const dataGraficoMensal = [];
+        const coresGraficoMensal = [];
+        const labelsGraficoMensal = [];
+
+        if (totalParaGraficoMensal > 0) {
+            if (totalEntradasMensal > 0) {
+                dataGraficoMensal.push((totalEntradasMensal / totalParaGraficoMensal) * 100);
+                coresGraficoMensal.push(corEntradaGrafico);
+                labelsGraficoMensal.push('Entradas');
+            }
+            if (totalGastosMensal > 0) {
+                dataGraficoMensal.push((totalGastosMensal / totalParaGraficoMensal) * 100);
+                coresGraficoMensal.push(corGastoGrafico);
+                labelsGraficoMensal.push('Gastos');
+            }
+        }
+
+        if (dataGraficoMensal.length === 0) {
+            ctxMensal.canvas.parentNode.innerHTML = '<p class="mensagem-vazia">Nenhuma entrada ou gasto no mês atual para o balanço.</p>';
+        } else {
+            new Chart(ctxMensal, {
+                type: 'doughnut',
+                data: {
+                    labels: labelsGraficoMensal,
+                    datasets: [{
+                        data: dataGraficoMensal,
+                        backgroundColor: coresGraficoMensal,
+                        hoverOffset: 10,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) { label += ': '; }
+                                    return label + context.raw.toFixed(2) + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 });

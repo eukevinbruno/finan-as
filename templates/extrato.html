@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extrato | Kinanças</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    {# REMOVIDO: <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> - Será movido para o final do body #}
+</head>
+<body>
+    <div class="header-app">
+        <h1 class="titulo-app">Relatório de Transações</h1>
+        <p class="subtitulo-app">Visão detalhada de suas movimentações.</p>
+        <div class="info-usuario-logado">
+            {% if nome_usuario_logado %}
+                Olá, {{ nome_usuario_logado }}! | <a href="{{ url_for('Sair') }}" class="link-logout">Sair <i class="fas fa-sign-out-alt"></i></a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% if mensagens %}
+                <div class="area-de-mensagens">
+                    {% for categoria, mensagem in mensagens %}
+                        <div class="mensagem {{ categoria }}">{{ mensagem }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="area-balanco-mensal">
+            <div class="card card-balanco-mensal">
+                <h2 class="titulo-card"><i class="fas fa-exchange-alt icone-resumo"></i> Balanço do Mês</h2>
+
+                <div class="area-do-canvas">
+                    <canvas id="graficoCircularMensal" width="300" height="300"></canvas>
+                </div>
+                <div class="legenda-grafico">
+                    <p><span class="cor-legenda entrada"></span> Entradas</p>
+                    <p><span class="cor-legenda gasto"></span> Gastos</p>
+                </div>
+
+                <div class="detalhes-balanco">
+                    <p class="entrada-total">Entradas: <span class="valor-entrada">{{ total_entradas | formatar_moeda }}</span></p>
+                    <p class="gasto-total">Gastos: <span class="valor-gasto">{{ total_gastos | formatar_moeda }}</span></p>
+                    <p class="saldo-liquido">Líquido: <span class="valor-liquido {% if saldo_liquido_mensal >= 0 %}positivo{% else %}negativo{% endif %}">{{ saldo_liquido_mensal | formatar_moeda }}</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="controles-relatorio">
+                <h2 class="titulo-card">Filtrar Transações</h2>
+                <button id="bt_mes_atual" class="bt-acao bt-filtro-relatorio ativo">Mês Atual</button>
+                <button id="bt_todas_transacoes" class="bt-acao bt-filtro-relatorio">Todas as Transações</button>
+            </div>
+
+            <h3 class="subtitulo-secao" id="titulo_periodo">Transações do Mês Atual</h3>
+            <ul class="lista-detalhes-relatorio" id="lista_transacoes_relatorio">
+                </ul>
+            <p class="mensagem-vazia" id="mensagem_vazia_relatorio" style="display: none;">Nenhuma transação encontrada para este período.</p>
+
+            <a href="{{ url_for('Pagina_inicial') }}" class="bt-acao bt-voltar"><i class="fas fa-arrow-left"></i> Voltar ao Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        const todasAsTransacoes = {{ todas_as_transacoes | safe }};
+        const tipoRelatorioInicial = "{{ tipo_relatorio | safe }}";
+        const totalEntradasMensal = {{ total_entradas }};
+        const totalGastosMensal = {{ total_gastos }};
+    </script>
+    {# NOVO: Chart.js carregado aqui, ANTES do relatorio.js #}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/relatorio.js') }}"></script>
+</body>
+</html>

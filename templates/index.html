@@ -11,7 +11,7 @@
 <body>
     <div class="header-app">
         <h1 class="titulo-app">Finanças Pessoais</h1>
-        <p class="subtitulo-app">Controle seu dinheiro de forma simples.</p>
+        {# REMOVIDO: <p class="subtitulo-app">Controle seu dinheiro de forma simples.</p> #}
         <div class="area-usuario-nav">
             {% if current_user.is_authenticated %}
                 <p class="nome-usuario-logado">Olá, {{ current_user.nome_de_usuario }}!</p>
@@ -34,27 +34,41 @@
             {% endif %}
         {% endwith %}
 
-        <div class="area-resumo-financeiro-total"> {# Nova classe para o container, se quiser estilo específico #}
-            <div class="card card-resumo-total">
-                <h2 class="titulo-card"><i class="fas fa-chart-pie icone-resumo"></i> Resumo Financeiro</h2>
-                <div class="detalhes-resumo-total">
-                    <p class="item-resumo">
-                        <span class="label-resumo">Saldo em Caixa:</span>
-                        <span class="valor-resumo-total valor-caixa">{{ saldo_caixa | formatar_moeda }}</span>
-                    </p>
-                    <p class="item-resumo">
-                        <span class="label-resumo">Valor Investido:</span>
-                        <span class="valor-resumo-total valor-investimento">{{ valor_investido | formatar_moeda }}</span>
-                    </p>
+        {# Área do Saldo Principal (estilo Mercado Pago) #}
+        <div class="card saldo-principal-area">
+            <div class="saldo-info">
+                <span class="label-saldo">Seu Saldo Disponível</span>
+                <div class="valor-e-toggle">
+                    <span class="valor-saldo" id="valor_saldo_principal">{{ saldo_caixa | formatar_moeda }}</span>
+                    <button class="bt-toggle-saldo" id="bt_toggle_saldo"><i class="fas fa-eye"></i></button>
                 </div>
-                <a href="{{ url_for('Pagina_investimentos') }}" class="bt-ver-detalhes bt-gerenciar-investimento">Gerenciar Investimentos</a>
             </div>
+            <a href="{{ url_for('Pagina_investimentos') }}" class="bt-gerenciar-saldo">
+                <i class="fas fa-wallet"></i> Ver Detalhes do Saldo
+            </a>
         </div>
 
-        <div class="card card-gerenciar-gastos-fixos">
-            <button id="bt_gerenciar_gastos_fixos" class="bt-acao bt-toggle-gastos-fixos">
-                <i class="fas fa-dollar-sign"></i> Gerenciar Gastos Fixos
-            </button>
+        {# Área de Ações Rápidas (estilo Mercado Pago) #}
+        <div class="card acoes-rapidas-area">
+            <h2 class="titulo-card-compacto">O que você quer fazer hoje?</h2>
+            <div class="lista-acoes-rapidas">
+                <a href="#" class="acao-rapida-item" onclick="document.getElementById('valor_transacao').focus(); return false;">
+                    <div class="icone-acao"><i class="fas fa-plus-circle"></i></div>
+                    <span class="texto-acao">Nova Transação</span>
+                </a>
+                <a href="{{ url_for('Pagina_investimentos') }}" class="acao-rapida-item">
+                    <div class="icone-acao"><i class="fas fa-chart-line"></i></div>
+                    <span class="texto-acao">Investimentos</span>
+                </a>
+                <a href="#" class="acao-rapida-item" onclick="document.getElementById('bt_gerenciar_gastos_fixos').click(); return false;">
+                    <div class="icone-acao"><i class="fas fa-receipt"></i></div>
+                    <span class="texto-acao">Gastos Fixos</span>
+                </a>
+                <a href="{{ url_for('Pagina_extrato') }}" class="acao-rapida-item">
+                    <div class="icone-acao"><i class="fas fa-file-invoice-dollar"></i></div>
+                    <span class="texto-acao">Extrato</span>
+                </a>
+            </div>
         </div>
 
         <div class="card card-grafico">
@@ -165,56 +179,33 @@
             </form>
         </div>
 
-        <div class="area-balanco-mensal"> <!--Nova classe para o container, se quiser estilo específico-->
-            <div class="card card-balanco-mensal">
-                <h2 class="titulo-card"><i class="fas fa-exchange-alt icone-resumo"></i> Balanço do Mês</h2>
-                <div class="detalhes-balanco">
-                    <p class="entrada-total">Entradas: <span class="valor-entrada">{{ total_entradas | formatar_moeda }}</span></p>
-                    <p class="gasto-total">Gastos: <span class="valor-gasto">{{ total_gastos | formatar_moeda }}</span></p>
-                    <p class="saldo-liquido">Líquido: <span class="valor-liquido {% if saldo_liquido_mensal >= 0 %}positivo{% else %}negativo{% endif %}">{{ saldo_liquido_mensal | formatar_moeda }}</span></p>
-                </div>
-                <div class="botoes-balanco">
-                    <a href="{{ url_for('Relatorio_detalhado', tipo_relatorio='entradas') }}" class="bt-ver-detalhes">Ver Entradas</a>
-                    <a href="{{ url_for('Relatorio_detalhado', tipo_relatorio='gastos') }}" class="bt-ver-detalhes">Ver Gastos</a>
-                </div>
-            </div>
-        </div>
-
-
-
-        <div class="card card-historico">
-            <h2 class="titulo-card">Últimas Transações</h2>
-            {% if transacoes %}
-                <ul class="lista-de-transacoes">
-                    {% for transacao in transacoes %} {# Sem o slice [:7] aqui, o JS fará a limitação #}
-                        <li class="item-transacao {{ transacao.tipo }}">
-                            <div class="detalhes-transacao">
-                                <span class="descricao-transacao">{{ transacao.descricao if transacao.descricao else "Sem descrição" }}</span>
-                                <span class="categoria-transacao">{{ transacao.categoria }} - <span class="data-transacao">{{ transacao.data_transacao.strftime('%d/%m/%Y') }}</span></span>
-                            </div>
-                            <span class="valor-transacao">
-                                {% if transacao.tipo == 'entrada' %}+{% else %}-{% endif %}{{ transacao.valor | formatar_moeda }}
-                            </span>
-                            <form action="{{ url_for('Excluir_transacao_web', id_da_transacao=transacao.id) }}" method="post" class="formulario-excluir">
-                                <button type="submit" class="bt-excluir" title="Excluir Transação"><i class="fas fa-times-circle"></i></button>
-                            </form>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <p class="ver-todas-transacoes"><a href="{{ url_for('Relatorio_detalhado', tipo_relatorio='todos') }}">Ver todas as transações</a></p>
-            {% else %}
-                <p class="mensagem-vazia">Nenhuma transação registrada ainda. Comece adicionando uma!</p>
-            {% endif %}
-        </div>
     </div>
 
     <script>
-        // Dados para o JavaScript, vindos do Flask
         const totalEntradasMensal = {{ total_entradas }};
         const totalGastosMensal = {{ total_gastos }};
-        const saldoCaixaTotal = {{ saldo_caixa }};
-        const valorInvestidoTotal = {{ valor_investido }};
+        const saldoCaixaTotal = {{ saldo_caixa | tojson | safe }};
+        const valorInvestidoTotal = {{ valor_investido | tojson | safe }};
         const categoriasExistentes = {{ categorias_existentes | tojson | safe }};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const valorSaldoPrincipal = document.getElementById('valor_saldo_principal');
+            const btToggleSaldo = document.getElementById('bt_toggle_saldo');
+
+            if (btToggleSaldo && valorSaldoPrincipal) {
+                btToggleSaldo.addEventListener('click', function() {
+                    valorSaldoPrincipal.classList.toggle('oculto');
+                    const icon = btToggleSaldo.querySelector('i');
+                    if (valorSaldoPrincipal.classList.contains('oculto')) {
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            }
+        });
     </script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

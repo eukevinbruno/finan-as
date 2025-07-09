@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Variáveis globais (definidas no HTML com Jinja)
     // const todasAsTransacoes = ...; // Já é um array de objetos com data como string 'YYYY-MM-DD'
     // const tipoRelatorioInicial = ...;
+    // NOVO: totalEntradasMensal e totalGastosMensal para o gráfico do extrato
 
     function Formatar_data_para_exibicao(data_iso) {
         const partes = data_iso.split('-'); // Espera 'AAAA-MM-DD'
@@ -103,5 +104,83 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         // Padrão: mostra transações do mês atual se não houver tipo específico ou tipo inválido
         Filtrar_por_mes_atual();
+    }
+
+    // =====================
+    // Gráfico Circular de Balanço Mensal (agora no relatorio.js)
+    // =====================
+    const ctxMensal = document.getElementById('graficoCircularMensal');
+    if (ctxMensal) { // Verifica se o canvas existe na página
+        // totalEntradasMensal e totalGastosMensal são passadas via Jinja2 no extrato.html
+        const totalMensalParaGrafico = totalEntradasMensal + totalGastosMensal;
+
+        let percentualEntradasMensal = 0;
+        let percentualGastosMensal = 0;
+
+        const corEntrada = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-entrada').trim();
+        const corGasto = getComputedStyle(document.documentElement).getPropertyValue('--cor-grafico-gasto').trim();
+
+        if (totalMensalParaGrafico > 0) {
+            percentualEntradasMensal = (totalEntradasMensal / totalMensalParaGrafico) * 100;
+            percentualGastosMensal = (totalGastosMensal / totalMensalParaGrafico) * 100;
+        }
+
+        const dataGraficoMensal = [];
+        const coresGraficoMensal = [];
+        const labelsGraficoMensal = [];
+
+        if (percentualEntradasMensal > 0) {
+            dataGraficoMensal.push(percentualEntradasMensal);
+            coresGraficoMensal.push(corEntrada);
+            labelsGraficoMensal.push('Entradas');
+        }
+        if (percentualGastosMensal > 0) {
+            dataGraficoMensal.push(percentualGastosMensal);
+            coresGraficoMensal.push(corGasto);
+            labelsGraficoMensal.push('Gastos');
+        }
+
+        if (dataGraficoMensal.length === 0) {
+            // Se não houver dados, exibe uma mensagem no lugar do gráfico
+            // Ajusta o padding para que a mensagem não fique muito espremida
+            const parentDiv = ctxMensal.parentNode;
+            if (parentDiv) {
+                parentDiv.innerHTML = '<p class="mensagem-vazia" style="padding: 20px;">Nenhum dado para o balanço do mês.</p>';
+            }
+        } else {
+            new Chart(ctxMensal.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: labelsGraficoMensal,
+                    datasets: [{
+                        data: dataGraficoMensal,
+                        backgroundColor: coresGraficoMensal,
+                        hoverOffset: 10,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    return label + context.raw.toFixed(2) + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 });
