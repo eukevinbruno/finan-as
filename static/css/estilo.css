@@ -91,7 +91,7 @@ body {
     color: var(--cor-texto-claro);
 }
 
-.subtitulo-app {
+.subtitulo-app { /* Esta classe será removida do HTML nas páginas */
     display: none;
 }
 
@@ -280,17 +280,18 @@ body {
 }
 
 .lista-acoes-rapidas {
-    display: flex; /* Usa flexbox para rolagem horizontal */
-    flex-wrap: nowrap; /* Impede quebra de linha */
-    overflow-x: auto; /* Habilita rolagem horizontal */
+    display: flex; /* AJUSTADO: Usa flexbox para layout em linha*/
+    flex-wrap: nowrap; /* AJUSTADO: Impede quebra de linha*/
+    overflow-x: auto; /* AJUSTADO: Habilita rolagem horizontal*/
     -webkit-overflow-scrolling: touch; /* Rolagem suave em iOS */
     scrollbar-width: none; /* Esconde a barra de rolagem para Firefox */
     padding: 0 25px; /* Padding para as laterais da lista, quebra da largura do bloco */
-    gap: 15px; /* Espaçamento entre os itens */
+    gap: 15px; /* AJUSTADO: Espaçamento entre os itens*/
+    justify-content: space-around; /* AJUSTADO: Distribui os itens na linha*/
 }
 
 .lista-acoes-rapidas::-webkit-scrollbar {
-    display: none; /* Esconde a barra de rolagem para navegadores WebKit (Chrome, Safari) */
+    display: none;
 }
 
 .acao-rapida-item {
@@ -598,10 +599,6 @@ body {
     color: var(--cor-texto-claro);
 }
 
-.bt-acao i {
-    font-size: 1.2em;
-}
-
 .bt-acao:active {
     transform: translateY(2px);
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
@@ -810,6 +807,7 @@ body {
 .ver-todas-transacoes a:hover {
     color: var(--cor-secundaria);
     text-decoration: underline;
+
 }
 
 /* ===================== */
@@ -1423,14 +1421,14 @@ body {
         border-top: none; /* Remove a linha divisória aqui */
     }
     .lista-acoes-rapidas {
-        grid-template-columns: unset; /* Remove grid for forced flex */
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
+        display: flex; /* AJUSTADO: Usa flexbox para layout em linha*/
+        flex-wrap: nowrap; /* AJUSTADO: Impede quebrar linha para rolagem horizontal*/
+        overflow-x: auto; /* AJUSTADO: Habilita rolagem horizontal*/
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
         padding: 0 15px; /* Ajuste de padding lateral da lista */
-        gap: 10px; /* Ajuste de gap */
+        gap: 10px; /* AJUSTADO: Espaçamento entre os itens*/
+        justify-content: space-around; /* AJUSTADO: Distribui os itens na linha*/
     }
     .lista-acoes-rapidas::-webkit-scrollbar {
         display: none;

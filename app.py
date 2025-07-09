@@ -266,6 +266,24 @@ def Pagina_inicial():
         data_atual_iso=data_atual_iso,
         gastos_fixos=gastos_fixos
     )
+
+# Rota para a página de Nova Transação (Formulário)
+@app.route('/nova_transacao', methods=['GET'])
+@login_required
+def Pagina_nova_transacao():
+    """Rota para exibir o formulário de adição de nova transação."""
+    # Obter categorias existentes do usuário
+    categorias_transacoes = db.session.query(Transacao.categoria).filter_by(usuario_id=current_user.id).distinct()
+    categorias_gastos_fixos = db.session.query(GastoFixo.categoria).filter_by(usuario_id=current_user.id).distinct()
+    categorias_existentes = sorted(list(set([c[0] for c in categorias_transacoes] + [c[0] for c in categorias_gastos_fixos])))
+    data_atual_iso = datetime.now().strftime('%Y-%m-%d')
+
+    return render_template(
+        'nova_transacao.html',
+        categorias_existentes=categorias_existentes,
+        data_atual_iso=data_atual_iso
+    )
+
 @app.route('/adicionar_transacao', methods=['POST'])
 @login_required
 def Adicionar_nova_transacao():
@@ -282,7 +300,8 @@ def Adicionar_nova_transacao():
             categoria = request.form['nova_categoria_nome'].strip().capitalize()
             if not categoria:
                 flash("Nome da nova categoria não pode ser vazio.", 'erro')
-                return redirect(url_for('Pagina_inicial'))
+                # Redireciona de volta para a página de nova transação com o erro
+                return redirect(url_for('Pagina_nova_transacao'))
 
         nova_transacao = Transacao(
             tipo=tipo,
@@ -303,13 +322,17 @@ def Adicionar_nova_transacao():
         db.session.commit()
 
         flash("Transação adicionada com sucesso!", 'sucesso')
+        # Redireciona para a página inicial após adicionar com sucesso
+        return redirect(url_for('Pagina_inicial'))
     except ValueError as e:
         flash(f"Falha ao adicionar transação: {e}", 'erro')
         db.session.rollback() # Reverte a sessão em caso de erro
+        return redirect(url_for('Pagina_nova_transacao')) # Redireciona de volta para a página de nova transação com o erro
     except Exception as e:
         flash(f"Ocorreu um erro inesperado ao adicionar transação: {e}", 'erro')
         db.session.rollback()
-    return redirect(url_for('Pagina_inicial'))
+        return redirect(url_for('Pagina_nova_transacao')) # Redireciona de volta para a página de nova transação com o erro
+
 
 @app.route('/excluir_transacao/<int:id_da_transacao>', methods=['POST'])
 @login_required
@@ -345,6 +368,21 @@ def Excluir_transacao_web(id_da_transacao):
         flash("Transação não encontrada ou você não tem permissão para excluí-la.", 'erro')
     return redirect(url_for('Pagina_inicial'))
 
+# Rota para a página de Adicionar Novo Gasto Fixo (Formulário)
+@app.route('/novo_gasto_fixo', methods=['GET'])
+@login_required
+def Pagina_novo_gasto_fixo():
+    """Rota para exibir o formulário de adição de novo gasto fixo."""
+    # Obter categorias existentes do usuário
+    categorias_transacoes = db.session.query(Transacao.categoria).filter_by(usuario_id=current_user.id).distinct()
+    categorias_gastos_fixos = db.session.query(GastoFixo.categoria).filter_by(usuario_id=current_user.id).distinct()
+    categorias_existentes = sorted(list(set([c[0] for c in categorias_transacoes] + [c[0] for c in categorias_gastos_fixos])))
+
+    return render_template(
+        'novo_gasto_fixo.html',
+        categorias_existentes=categorias_existentes
+    )
+
 @app.route('/adicionar_gasto_fixo', methods=['POST'])
 @login_required
 def Adicionar_novo_gasto_fixo():
@@ -363,7 +401,7 @@ def Adicionar_novo_gasto_fixo():
             categoria = request.form['nova_categoria_gasto_fixo_nome'].strip().capitalize()
             if not categoria:
                 flash("Nome da nova categoria de gasto fixo não pode ser vazio.", 'erro')
-                return redirect(url_for('Pagina_inicial'))
+                return redirect(url_for('Pagina_novo_gasto_fixo'))
 
         novo_gasto_fixo = GastoFixo(
             descricao=descricao,
@@ -375,13 +413,16 @@ def Adicionar_novo_gasto_fixo():
         db.session.add(novo_gasto_fixo)
         db.session.commit()
         flash("Gasto fixo adicionado com sucesso!", 'sucesso')
+        return redirect(url_for('Pagina_inicial')) # Redireciona para a página inicial após adicionar com sucesso
     except ValueError as e:
         flash(f"Falha ao adicionar gasto fixo: {e}", 'erro')
         db.session.rollback()
+        return redirect(url_for('Pagina_novo_gasto_fixo')) # Redireciona de volta para a página com o erro
     except Exception as e:
         flash(f"Ocorreu um erro inesperado ao adicionar gasto fixo: {e}", 'erro')
         db.session.rollback()
-    return redirect(url_for('Pagina_inicial'))
+        return redirect(url_for('Pagina_novo_gasto_fixo')) # Redireciona de volta para a página com o erro
+
 
 @app.route('/excluir_gasto_fixo/<int:id_gasto_fixo>', methods=['POST'])
 @login_required
@@ -537,7 +578,7 @@ def Pagina_extrato():
     total_gastos_mes = sum(t.valor for t in transacoes_mes_atual if t.tipo == 'gasto')
     saldo_liquido_mensal = total_entradas_mes - total_gastos_mes
 
-    # NOVO: Calcular movimentação de investimento do mês para o extrato
+    # Calcular movimentação de investimento do mês para o extrato
     total_aportes_mensal = sum(t.valor for t in transacoes_mes_atual if t.tipo == 'investimento' and 'Aporte' in t.descricao)
     total_resgates_mensal = sum(t.valor for t in transacoes_mes_atual if t.tipo == 'investimento' and 'Resgate' in t.descricao)
     net_movimento_investimento_mensal = total_aportes_mensal - total_resgates_mensal
@@ -549,7 +590,7 @@ def Pagina_extrato():
         total_entradas=total_entradas_mes,
         total_gastos=total_gastos_mes,
         saldo_liquido_mensal=saldo_liquido_mensal,
-        # NOVO: Passa os dados de investimento mensal para o template
+        # Passa os dados de investimento mensal para o template
         total_aportes_mensal=total_aportes_mensal,
         total_resgates_mensal=total_resgates_mensal,
         net_movimento_investimento_mensal=net_movimento_investimento_mensal,

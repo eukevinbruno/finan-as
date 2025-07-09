@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Transação - Meu App de Finanças</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="header-app">
+        <h1 class="titulo-app">Adicionar Transação</h1>
+        <div class="area-usuario-nav">
+            {# Não há nome de usuário logado aqui, apenas links de navegação #}
+            <a href="{{ url_for('Pagina_inicial') }}" class="bt-nav-usuario"><i class="fas fa-home"></i> Dashboard</a>
+        </div>
+    </div>
+
+    <div class="container">
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% if mensagens %}
+                <div class="area-de-mensagens">
+                    {% for categoria, mensagem in mensagens %}
+                        <div class="mensagem {{ categoria }}">{{ mensagem }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="card card-formulario">
+            <h2 class="titulo-card">Registrar Nova Transação</h2>
+            <form action="{{ url_for('Adicionar_nova_transacao') }}" method="post" class="formulario-transacao">
+                <div class="campo-do-formulario">
+                    <label for="valor_transacao">Valor</label>
+                    <input type="text" id="valor_transacao" name="valor" inputmode="numeric" pattern="[0-9,\.]*" placeholder="0,00" required>
+                </div>
+                <div class="campo-do-formulario">
+                    <label for="data_transacao">Data</label>
+                    <input type="date" id="data_transacao" name="data_transacao" value="{{ data_atual_iso }}" required>
+                </div>
+                <div class="campo-do-formulario">
+                    <label for="categoria_existente">Categoria</label>
+                    <select id="categoria_existente" name="categoria_existente" required>
+                        <option value="" disabled selected>Selecione ou Crie</option>
+                        {% for cat in categorias_existentes %}
+                            <option value="{{ cat }}">{{ cat }}</option>
+                        {% endfor %}
+                        <option value="nova_categoria">Nova Categoria...</option>
+                    </select>
+                    <input type="text" id="nova_categoria_nome" name="nova_categoria_nome" placeholder="Nome da nova categoria" style="display: none; margin-top: 10px;">
+                </div>
+                <div class="campo-do-formulario">
+                    <label for="descricao">Descrição (Opcional)</label>
+                    <input type="text" id="descricao" name="descricao" placeholder="Ex: Salário, Aluguel">
+                </div>
+                <div class="campo-do-formulario tipo-transacao-grupo">
+                    <label>Tipo:</label>
+                    <div class="opcoes-tipo">
+                        <label for="entrada" class="radio-label">
+                            <input type="radio" id="entrada" name="tipo" value="entrada" checked> Entrada
+                        </label>
+                        <label for="gasto" class="radio-label">
+                            <input type="radio" id="gasto" name="tipo" value="gasto"> Gasto
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="bt-acao bt-adicionar">Adicionar</button>
+            </form>
+        </div>
+
+        <a href="{{ url_for('Pagina_inicial') }}" class="bt-acao bt-voltar"><i class="fas fa-arrow-left"></i> Voltar ao Dashboard</a>
+    </div>
+
+    <script>
+        // Dados para o JavaScript, vindos do Flask
+        const categoriasExistentes = {{ categorias_existentes | tojson | safe }};
+    </script>
+    <script src="{{ url_for('static', filename='js/nova_transacao.js') }}"></script>
+</body>
+</html>

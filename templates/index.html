@@ -6,7 +6,6 @@
     <title>Meu App de Finanças Digitais</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    {# REMOVIDO: <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> - Será movido para o final do body #}
 </head>
 <body>
     <div class="header-app">
@@ -33,10 +32,10 @@
             {% endif %}
         {% endwith %}
 
-        {# NOVO: Bloco de Saldo e Ações Rápidas (Estilo Mercado Pago) #}
+        {# Bloco de Saldo e Ações Rápidas (Estilo Mercado Pago) #}
         <div class="bloco-saldo-e-acoes">
             <div class="saldo-principal-area">
-                {# NOVO: Estrutura para duas linhas de saldo #}
+                {# Estrutura para duas linhas de saldo #}
                 <div class="saldo-info-primeira-linha">
                     <span class="label-saldo">Saldo</span>
                     <a href="{{ url_for('Pagina_extrato') }}" class="link-ir-extrato">Ir ao extrato <i class="fas fa-chevron-right"></i></a>
@@ -51,7 +50,8 @@
 
             <div class="acoes-rapidas-area">
                 <div class="lista-acoes-rapidas">
-                    <a href="#" class="acao-rapida-item" onclick="document.getElementById('valor_transacao').focus(); return false;">
+                    {# NOVO: Link para a nova página de transação #}
+                    <a href="{{ url_for('Pagina_nova_transacao') }}" class="acao-rapida-item">
                         <div class="icone-acao"><i class="fas fa-plus-circle"></i></div>
                         <span class="texto-acao">Nova Transação</span>
                     </a>
@@ -59,8 +59,8 @@
                         <div class="icone-acao"><i class="fas fa-chart-line"></i></div>
                         <span class="texto-acao">Investimentos</span>
                     </a>
-                    {# NOVO: Item de ação para Gastos Fixos com ID para JS #}
-                    <a href="#" class="acao-rapida-item" id="acao_gastos_fixos_toggle">
+                    {# NOVO: Link para a nova página de Gasto Fixo #}
+                    <a href="{{ url_for('Pagina_novo_gasto_fixo') }}" class="acao-rapida-item" id="acao_gastos_fixos_toggle">
                         <div class="icone-acao"><i class="fas fa-receipt"></i></div>
                         <span class="texto-acao">Gastos Fixos</span>
                     </a>
@@ -68,92 +68,16 @@
                         <div class="icone-acao"><i class="fas fa-file-invoice-dollar"></i></div>
                         <span class="texto-acao">Extrato</span>
                     </a>
-                    {# Adicione mais ações aqui para scroll horizontal #}
+                    {# Removidos os ícones adicionais para focar nos 4 principais #}
                 </div>
             </div>
         </div>
 
-        {# Os demais cards existentes seguem abaixo #}
+        {# REMOVIDO: O card do formulário de Nova Transação, pois agora está em nova_transacao.html #}
+        {# REMOVIDO: O formulário de Adicionar Novo Gasto Fixo, pois agora está em novo_gasto_fixo.html #}
 
-        <div class="card card-grafico">
-            <h2 class="titulo-card">Período Total</h2>
-            <div class="area-do-canvas">
-                <canvas id="graficoCircular" width="300" height="300"></canvas>
-            </div>
-            <div class="legenda-grafico">
-                <p><span class="cor-legenda gasto"></span> Gastos</p>
-                <p><span class="cor-legenda entrada"></span> Entradas</p>
-                <p><span class="cor-legenda investimento"></span> Investimentos</p>
-            </div>
-        </div>
-
-        <div class="card card-historico">
-            <h2 class="titulo-card">Últimas Transações</h2>
-            {% if transacoes %}
-                <ul class="lista-de-transacoes">
-                    {% for transacao in transacoes[:3] %}
-                        <li class="item-transacao {{ transacao.tipo }}">
-                            <div class="detalhes-transacao">
-                                <span class="descricao-transacao">{{ transacao.descricao if transacao.descricao else "Sem descrição" }}</span>
-                                <span class="categoria-transacao">{{ transacao.categoria }} - <span class="data-transacao">{{ transacao.data_transacao.strftime('%d/%m/%Y') }}</span></span>
-                            </div>
-                            <span class="valor-transacao">
-                                {% if transacao.tipo == 'entrada' %}+{% elif transacao.tipo == 'gasto' %}-{% else %}*{% endif %}{{ transacao.valor | formatar_moeda }}
-                            </span>
-                            <form action="{{ url_for('Excluir_transacao_web', id_da_transacao=transacao.id) }}" method="post" class="formulario-excluir">
-                                <button type="submit" class="bt-excluir" title="Excluir Transação"><i class="fas fa-times-circle"></i></button>
-                            </form>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <p class="ver-todas-transacoes"><a href="{{ url_for('Pagina_extrato') }}">Ver todas as transações</a></p>
-            {% else %}
-                <p class="mensagem-vazia">Nenhuma transação registrada ainda. Comece adicionando uma!</p>
-            {% endif %}
-        </div>
-
-        <div class="card card-formulario">
-            <h2 class="titulo-card">Nova Transação</h2>
-            <form action="{{ url_for('Adicionar_nova_transacao') }}" method="post" class="formulario-transacao">
-                <div class="campo-do-formulario">
-                    <label for="valor_transacao">Valor</label>
-                    <input type="text" id="valor_transacao" name="valor" inputmode="numeric" pattern="[0-9,\.]*" placeholder="0,00" required>
-                </div>
-                <div class="campo-do-formulario">
-                    <label for="data_transacao">Data</label>
-                    <input type="date" id="data_transacao" name="data_transacao" value="{{ data_atual_iso }}" required>
-                </div>
-                <div class="campo-do-formulario">
-                    <label for="categoria_existente">Categoria</label>
-                    <select id="categoria_existente" name="categoria_existente" required>
-                        <option value="" disabled selected>Selecione ou Crie</option>
-                        {% for cat in categorias_existentes %}
-                            <option value="{{ cat }}">{{ cat }}</option>
-                        {% endfor %}
-                        <option value="nova_categoria">Nova Categoria...</option>
-                    </select>
-                    <input type="text" id="nova_categoria_nome" name="nova_categoria_nome" placeholder="Nome da nova categoria" style="display: none; margin-top: 10px;">
-                </div>
-                <div class="campo-do-formulario">
-                    <label for="descricao">Descrição (Opcional)</label>
-                    <input type="text" id="descricao" name="descricao" placeholder="Ex: Salário, Aluguel">
-                </div>
-                <div class="campo-do-formulario tipo-transacao-grupo">
-                    <label>Tipo:</label>
-                    <div class="opcoes-tipo">
-                        <label for="entrada" class="radio-label">
-                            <input type="radio" id="entrada" name="tipo" value="entrada" checked> Entrada
-                        </label>
-                        <label for="gasto" class="radio-label">
-                            <input type="radio" id="gasto" name="tipo" value="gasto"> Gasto
-                        </label>
-                    </div>
-                </div>
-                <button type="submit" class="bt-acao bt-adicionar">Adicionar</button>
-            </form>
-        </div>
-
-        <div class="card card-gastos-fixos" id="secao_gastos_fixos" style="display: none;">
+        {# A seção secao_gastos_fixos (lista de gastos fixos) AGORA é visível por padrão #}
+        <div class="card card-gastos-fixos" id="secao_gastos_fixos">
             <h2 class="titulo-card">Meus Gastos Fixos</h2>
             <ul class="lista-gastos-fixos">
                 {% if gastos_fixos %}
@@ -178,36 +102,44 @@
                     <p class="mensagem-vazia">Nenhum gasto fixo cadastrado ainda.</p>
                 {% endif %}
             </ul>
-
-            <h3 class="titulo-card sub-titulo">Adicionar Novo Gasto Fixo</h3>
-            <form action="{{ url_for('Adicionar_novo_gasto_fixo') }}" method="post" class="formulario-gasto-fixo">
-                <div class="campo-do-formulario">
-                    <label for="descricao_gasto_fixo">Descrição</label>
-                    <input type="text" id="descricao_gasto_fixo" name="descricao_gasto_fixo" placeholder="Ex: Aluguel, Netflix" required>
-                </div>
-                <div class="campo-do-formulario">
-                    <label for="valor_programado">Valor Programado</label>
-                    <input type="text" id="valor_programado" name="valor_programado" inputmode="numeric" pattern="[0-9,\.]*" placeholder="0,00" required>
-                </div>
-                <div class="campo-do-formulario">
-                    <label for="valor_aproximado">Valor Aproximado (Opcional)</label>
-                    <input type="text" id="valor_aproximado" name="valor_aproximado" inputmode="numeric" pattern="[0-9,\.]*" placeholder="0,00 (se variável)">
-                </div>
-                <div class="campo-do-formulario">
-                    <label for="categoria_gasto_fixo_existente">Categoria</label>
-                    <select id="categoria_gasto_fixo_existente" name="categoria_gasto_fixo_existente" required>
-                        <option value="" disabled selected>Selecione ou Crie</option>
-                        {% for cat in categorias_existentes %}
-                            <option value="{{ cat }}">{{ cat }}</option>
-                        {% endfor %}
-                        <option value="nova_categoria_gasto_fixo">Nova Categoria...</option>
-                    </select>
-                    <input type="text" id="nova_categoria_gasto_fixo_nome" name="nova_categoria_gasto_fixo_nome" placeholder="Nome da nova categoria" style="display: none; margin-top: 10px;">
-                </div>
-                <button type="submit" class="bt-acao bt-adicionar-gasto-fixo">Adicionar Gasto Fixo</button>
-            </form>
         </div>
 
+        <div class="card card-grafico">
+            <h2 class="titulo-card">Período Total</h2>
+            <div class="area-do-canvas">
+                <canvas id="graficoCircular" width="300" height="300"></canvas>
+            </div>
+            <div class="legenda-grafico">
+                <p><span class="cor-legenda gasto"></span> Gastos</p>
+                <p><span class="cor-legenda entrada"></span> Entradas</p>
+                <p><span class="cor-legenda investimento"></span> Investimentos</p>
+            </div>
+        </div>
+
+        <div class="card card-historico">
+            <h2 class="titulo-card">Últimas Transações</h2>
+            {% if transacoes %}
+                <ul class="lista-de-transacoes">
+                    {% for transacao in transacoes[:4] %}
+                        <li class="item-transacao {{ transacao.tipo }}">
+                            <div class="detalhes-transacao">
+                                <span class="descricao-transacao">{{ transacao.descricao if transacao.descricao else "Sem descrição" }}</span>
+                                <span class="categoria-transacao">{{ transacao.categoria }} - <span class="data-transacao">{{ transacao.data_transacao.strftime('%d/%m/%Y') }}</span></span>
+                            </div>
+                            <span class="valor-transacao">
+                                {% if transacao.tipo == 'entrada' %}+{% elif transacao.tipo == 'gasto' %}-{% else %}*{% endif %}{{ transacao.valor | formatar_moeda }}
+                            </span>
+                            <form action="{{ url_for('Excluir_transacao_web', id_da_transacao=transacao.id) }}" method="post" class="formulario-excluir">
+                                <button type="submit" class="bt-excluir" title="Excluir Transação"><i class="fas fa-times-circle"></i></button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <p class="ver-todas-transacoes"><a href="{{ url_for('Pagina_extrato') }}">Ver todas as transações</a></p>
+            {% else %}
+                <p class="mensagem-vazia">Nenhuma transação registrada ainda. Comece adicionando uma!</p>
+            {% endif %}
+        </div>
     </div>
 
     <script>
